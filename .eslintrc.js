@@ -34,6 +34,7 @@ module.exports = {
     'vue/name-property-casing': 'off',
     'import/no-named-as-default-member': 'off',
     'consistent-return': 'off',
-    'prefer-destructuring': 'warn'
+    'prefer-destructuring': 'warn',
+    'no-unused-vars': 'warn'
   }
 }

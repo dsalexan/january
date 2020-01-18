@@ -13,10 +13,15 @@
     "fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/auth": "^4.8.5",
+    "@nuxtjs/axios": "^5.9.3",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/toast": "^3.3.0",
     "debug": "^4.1.1",
+    "install": "^0.13.0",
+    "lodash": "^4.17.15",
+    "npm": "^6.13.6",
     "nuxt": "^2.0.0"
   },
   "devDependencies": {

@@ -1,81 +1,101 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" :clipped="clipped" fixed app>
+  <v-app>
+    <v-navigation-drawer v-model="drawer" :mini-variant="miniVariant" clipped persistent fixed app>
       <v-list>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item>
           <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn v-on="on" @click.stop="toogleMenu()" icon>
+                  <v-icon>mdi-menu</v-icon>
+                </v-btn>
+              </template>
+              <span>{{ miniVariant ? 'Expandir Menu' : 'Esconder Menu' }}</span>
+            </v-tooltip>
           </v-list-item-action>
+        </v-list-item>
+      </v-list>
+      <v-list>
+        <v-list-item>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-btn :fab="miniVariant" :color="nameColor" :text="!miniVariant">
+              <span v-if="!miniVariant">Danilo Alexandre</span>
+              <span v-else>DA</span>
+            </v-btn>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      <v-divider></v-divider>
+
+      <v-spacer></v-spacer>
+
+      <v-spacer></v-spacer>
+
+      <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn @click="signOut()" v-on="on" :icon="miniVariant" :text="!miniVariant">
+                  <v-icon left>mdi-logout-variant</v-icon>
+                  <span v-if="!miniVariant">Sair</span>
+                </v-btn>
+              </template>
+              <span>Sair</span>
+            </v-tooltip>
           </v-list-item-content>
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn @click.stop="miniVariant = !miniVariant" icon>
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn @click.stop="clipped = !clipped" icon>
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn @click.stop="fixed = !fixed" icon>
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn @click.stop="rightDrawer = !rightDrawer" icon>
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-app-bar>
     <v-content>
       <v-container>
         <nuxt />
       </v-container>
     </v-content>
-    <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer :fixed="fixed" app>
-      <span>&copy; 2019</span>
+    <v-footer app>
+      <div class="d-flex justify-center" style="width: 100%">
+        <span class="caption">2020 &mdash; <b>January Project</b></span>
+      </div>
     </v-footer>
   </v-app>
 </template>
 
 <script>
+import _ from 'lodash'
+import debug from '@/utils/debug'
+
 export default {
   data() {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
+      drawer: true,
       miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      nameColor: ''
+    }
+  },
+  methods: {
+    toogleMenu() {
+      this.miniVariant = !this.miniVariant
+      this.nameColor = this.miniVariant ? 'white' : ''
+      _.debounce(() => {
+        this.nameColor = this.miniVariant ? 'grey lighten-4' : ''
+      }, 120)()
+    },
+    signOut() {
+      debug('Signing Out')
     }
   }
 }
 </script>
+
+<style lang="sass" scoped>
+.v-navigation-drawer::v-deep
+  & > .v-navigation-drawer__content
+    display: flex
+    flex-direction: column
+
+  .v-btn
+    &.v-btn--fab
+      height: 48px !important
+      width: 48px !important
+      box-shadow: none
+</style>
