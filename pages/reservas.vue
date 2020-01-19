@@ -1,7 +1,7 @@
 <template>
-  <v-layout class="page-index" column justify-center align-center>
+  <v-layout class="page-reserva" column justify-center align-center>
     <v-flex class="d-flex flex-column justify-center align-center">
-      <h2 class="display-2 has-text-centered mb-1 font-weight-bold">Início</h2>
+      <h2 class="display-2 has-text-centered mb-1 font-weight-bold">Reservas</h2>
       <!-- <div class="has-text-centered mb-12">Atualize as informações do seu perfil ou modifique sua senha.</div> -->
     </v-flex>
   </v-layout>
@@ -14,5 +14,5 @@ export default {
 </script>
 
 <style lang="sass" scoped>
-.page-index
+.page-reservas
 </style>

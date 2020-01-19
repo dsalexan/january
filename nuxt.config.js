@@ -30,7 +30,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [],
+  plugins: ['~/plugins/string.js'],
   /*
    ** Nuxt.js dev-modules
    */
@@ -49,14 +49,18 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
     '@nuxtjs/auth',
-    '@nuxtjs/toast'
+    '@nuxtjs/toast',
+    '@nuxtjs/style-resources'
   ],
+  styleResources: {
+    scss: ['assets/main.scss']
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: 'http://127.0.0.1:3333/api'
+    baseURL: 'http://127.0.0.1:3001'
   },
   auth: {
     redirect: {
@@ -67,15 +71,19 @@ export default {
     strategies: {
       local: {
         endpoints: {
-          login: { url: 'signin', method: 'post', propertyName: 'data.token' },
-          user: { url: 'me', method: 'get', propertyName: 'data' },
-          logout: { url: 'signout' }
-        }
+          login: { url: 'auth/signin', method: 'post', propertyName: 'data.token' },
+          user: { url: 'auth/me', method: 'get', propertyName: 'data' },
+          logout: false
+        },
+        tokenName: 'x-access-token',
+        tokenType: false
       }
     }
   },
   toast: {
     position: 'bottom-center',
+    theme: 'toasted-primary',
+    duration: 1500,
     register: [
       // Register custom toasts
       {

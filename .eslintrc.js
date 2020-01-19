@@ -19,8 +19,8 @@ module.exports = {
   ],
   // add your custom rules here
   rules: {
-    'no-console': 'off',
-    'no-debugger': 'off',
+    'no-console': 'warn',
+    'no-debugger': 'warn',
     camelcase: 'off',
     'max-len': [
       'warn',
@@ -35,6 +35,7 @@ module.exports = {
     'import/no-named-as-default-member': 'off',
     'consistent-return': 'off',
     'prefer-destructuring': 'warn',
-    'no-unused-vars': 'warn'
+    'no-unused-vars': 'warn',
+    'no-extend-native': 'off'
   }
 }

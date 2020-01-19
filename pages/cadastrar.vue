@@ -1,66 +1,108 @@
 <template>
-  <section class="page-cadastrar section">
-    <div class="container">
-      <div class="columns">
-        <div class="column is-4 is-offset-4">
-          <h2 class="title has-text-centered">Register!</h2>
+  <section class="page-cadastrar section mx-10">
+    <h2 class="title has-text-centered mb-6">Cadastre-se!</h2>
 
-          <form @submit.prevent="register" method="post">
-            <div class="field">
-              <label class="label">Username</label>
-              <div class="control">
-                <input v-model="username" type="text" class="input" name="username" required />
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Email</label>
-              <div class="control">
-                <input v-model="email" type="email" class="input" name="email" required />
-              </div>
-            </div>
-            <div class="field">
-              <label class="label">Password</label>
-              <div class="control">
-                <input v-model="password" type="password" class="input" name="password" required />
-              </div>
-            </div>
-            <div class="control">
-              <button type="submit" class="button is-dark is-fullwidth">Register</button>
-            </div>
-          </form>
-
-          <div class="has-text-centered" style="margin-top: 20px">
-            Already got an account? <nuxt-link to="/login">Login</nuxt-link>
-          </div>
+    <form @submit.prevent="register" method="post">
+      <div class="field mb-2">
+        <div class="control">
+          <v-text-field
+            v-model="name"
+            hide-details
+            label="Nome"
+            type="text"
+            autocomplete="Nome"
+            name="name"
+            filled
+            required
+          ></v-text-field>
         </div>
       </div>
+      <div class="field mb-2">
+        <div class="control">
+          <v-text-field
+            v-model="email"
+            hide-details
+            label="Email"
+            type="email"
+            name="email"
+            autocomplete="email"
+            filled
+            required
+          ></v-text-field>
+        </div>
+      </div>
+      <div class="field mb-2">
+        <div class="control">
+          <v-text-field
+            v-model="password"
+            hide-details
+            label="Senha"
+            type="password"
+            name="password"
+            autocomplete="password"
+            filled
+            required
+          ></v-text-field>
+        </div>
+      </div>
+      <div class="field mb-6">
+        <div class="control">
+          <v-text-field
+            v-model="confirm_password"
+            :hide-details="confirmedPassword"
+            :error-messages="!confirmedPassword ? ['A confirmação de senha está incorreta'] : []"
+            label="Confirme a Senha"
+            type="password"
+            name="confirm-password"
+            autocomplete="password"
+            filled
+            required
+          ></v-text-field>
+        </div>
+      </div>
+      <div class="control">
+        <v-btn :disabled="!isFormFilled" type="submit" block tile color="amber accent-4">Confirmar</v-btn>
+      </div>
+    </form>
+
+    <div class="has-text-centered mt-12" style="font-size: 0.8em; text-align: center">
+      Já tem uma conta? <nuxt-link to="/entrar">Entrar</nuxt-link>
     </div>
   </section>
 </template>
 
 <script>
 export default {
+  layout: 'empty',
   data() {
     return {
-      username: '',
+      name: '',
       email: '',
       password: '',
+      confirm_password: '',
       error: null
     }
   },
-
+  computed: {
+    isFormFilled() {
+      return !this.email.isEmpty() && !this.password.isEmpty() && !this.name.isEmpty() && this.confirmedPassword
+    },
+    confirmedPassword() {
+      return this.password === this.confirm_password
+    }
+  },
   methods: {
     async register() {
       try {
         this.$toast.show('Cadastrando...')
 
-        await this.$axios.post('register', {
-          username: this.username,
+        await this.$axios.post('auth/register', {
+          name: this.name,
           email: this.email,
           password: this.password
         })
 
-        this.$toast.show('Logando...')
+        this.$toast.show('Entrando...')
 
         await this.$auth.loginWith('local', {
           data: {
@@ -72,7 +114,7 @@ export default {
 
         this.$router.push('/')
       } catch (e) {
-        this.error = e.response.data.message
+        this.error = e.response.data.error
         this.$toast.error(this.error)
       }
     }
@@ -82,4 +124,6 @@ export default {
 
 <style lang="sass" scoped>
 .page-cadastrar
+  width: 100%
+  max-width: 400px
 </style>

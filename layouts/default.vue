@@ -18,16 +18,27 @@
       <v-list>
         <v-list-item>
           <v-list-item-content>
-            <v-btn :fab="miniVariant" :color="nameColor" :text="!miniVariant">
-              <span v-if="!miniVariant">Danilo Alexandre</span>
-              <span v-else>DA</span>
-            </v-btn>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :fab="miniVariant"
+                  :icon="miniVariant"
+                  :text="!miniVariant"
+                  :color="$route.name === 'perfil' ? 'amber accent-4' : ''"
+                  to="/perfil"
+                  nuxt
+                >
+                  <span v-if="!miniVariant" style="color: black!important">{{ userName }}</span>
+                  <span v-else style="color: black!important">{{ userAbbreviation }}</span>
+                </v-btn>
+              </template>
+              <span>Meu Perfil</span>
+            </v-tooltip>
           </v-list-item-content>
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
-
-      <v-spacer></v-spacer>
 
       <v-spacer></v-spacer>
 
@@ -36,8 +47,57 @@
           <v-list-item-content>
             <v-tooltip right>
               <template v-slot:activator="{ on }">
-                <v-btn @click="signOut()" v-on="on" :icon="miniVariant" :text="!miniVariant">
-                  <v-icon left>mdi-logout-variant</v-icon>
+                <v-btn
+                  v-on="on"
+                  :fab="miniVariant"
+                  :icon="miniVariant"
+                  :text="!miniVariant"
+                  :color="$route.name === 'index' ? 'amber accent-4' : ''"
+                  to="/"
+                  nuxt
+                >
+                  <v-icon :left="!miniVariant">mdi-home</v-icon>
+                  <span v-if="!miniVariant">Início</span>
+                </v-btn>
+              </template>
+              <span>Início</span>
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :fab="miniVariant"
+                  :icon="miniVariant"
+                  :text="!miniVariant"
+                  :color="$route.name === 'reservas' ? 'amber accent-4' : ''"
+                  to="/reservas"
+                  nuxt
+                >
+                  <v-badge :color="`${bookingColor} darken-1`" :value="miniVariant && overview.quantity" overlap dot>
+                    <v-icon :left="!miniVariant">mdi-bookmark</v-icon>
+                  </v-badge>
+                  <span v-if="!miniVariant">Reservas</span>
+                </v-btn>
+              </template>
+              <span>Minhas Reservas</span>
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
+      <v-spacer></v-spacer>
+
+      <v-list>
+        <v-list-item>
+          <v-list-item-content>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn @click="signOut()" v-on="on" :fab="miniVariant" :icon="miniVariant" :text="!miniVariant">
+                  <v-icon :left="!miniVariant">mdi-logout-variant</v-icon>
                   <span v-if="!miniVariant">Sair</span>
                 </v-btn>
               </template>
@@ -48,7 +108,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-content>
-      <v-container>
+      <v-container class="fill-height">
         <nuxt />
       </v-container>
     </v-content>
@@ -62,26 +122,50 @@
 
 <script>
 import _ from 'lodash'
+import { mapState, mapGetters } from 'vuex'
+import { getData, setData } from 'nuxt-storage/local-storage'
 import debug from '@/utils/debug'
 
 export default {
   data() {
     return {
       drawer: true,
-      miniVariant: false,
-      nameColor: ''
+      miniVariant: getData('collapsedMenu') || false
+    }
+  },
+  computed: {
+    ...mapState('auth', ['user']),
+    ...mapGetters('booking', ['overview']),
+    userName() {
+      return this.user.name
+    },
+    userAbbreviation() {
+      return this.user.name
+        .trim()
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+    },
+    bookingColor() {
+      if (this.overview.state === 'waiting') {
+        return 'blue'
+      } else if (this.overview.state === 'problem') {
+        return 'red'
+      } else {
+        return 'green'
+      }
     }
   },
   methods: {
     toogleMenu() {
       this.miniVariant = !this.miniVariant
-      this.nameColor = this.miniVariant ? 'white' : ''
-      _.debounce(() => {
-        this.nameColor = this.miniVariant ? 'grey lighten-4' : ''
-      }, 120)()
+      setData('collapsedMenu', this.miniVariant)
     },
-    signOut() {
-      debug('Signing Out')
+    async signOut() {
+      this.$toast.show('Saindo...')
+      await this.$auth.logout('local')
+
+      this.$router.push('/')
     }
   }
 }
