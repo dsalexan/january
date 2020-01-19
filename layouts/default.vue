@@ -122,7 +122,7 @@
 
 <script>
 import _ from 'lodash'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { getData, setData } from 'nuxt-storage/local-storage'
 import debug from '@/utils/debug'
 
@@ -156,7 +156,13 @@ export default {
       }
     }
   },
+  created() {
+    this.initMaterias()
+  },
   methods: {
+    ...mapActions('materias', {
+      initMaterias: 'init'
+    }),
     toogleMenu() {
       this.miniVariant = !this.miniVariant
       setData('collapsedMenu', this.miniVariant)

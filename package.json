@@ -16,6 +16,7 @@
     "@nuxtjs/auth": "^4.8.5",
     "@nuxtjs/axios": "^5.9.3",
     "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/moment": "^1.5.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.3.0",
     "debug": "^4.1.1",

@@ -26,6 +26,24 @@
                   <v-icon color="green">mdi-check-bold</v-icon>
                 </v-btn>
               </template>
+              <template v-slot:item.weekday="{ item }">
+                {{ item.weekday.toString().toWeekday() }}
+              </template>
+              <template v-slot:item.starttime="{ item }">
+                <div v-for="(time, j) in item.starttime" :key="j">
+                  {{ $moment('2019-01-19 ' + item.starttime[j]).format('HH:mm') }}
+                </div>
+              </template>
+              <template v-slot:item.endtime="{ item }">
+                <div v-for="(time, j) in item.endtime" :key="j">
+                  {{ $moment('2019-01-19 ' + item.endtime[j]).format('HH:mm') }}
+                </div>
+              </template>
+              <template v-slot:item.turmas="{ item }">
+                <v-chip v-for="(turma, j) in item.turmas" :key="j" class="ma-2" small>
+                  {{ TURMAS[turma] }}
+                </v-chip>
+              </template>
             </v-data-table>
           </v-tab-item>
         </v-tabs>
@@ -38,10 +56,13 @@
 import { getData, setData } from 'nuxt-storage/local-storage'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
+import { LIST_TURMAS } from '~/utils/turmas'
+
 export default {
   middleware: 'auth',
   data() {
     return {
+      TURMAS: LIST_TURMAS,
       tab: undefined,
       itemsPerPage: getData('itemsPerPage') || 5,
       headers: [
@@ -53,7 +74,7 @@ export default {
         { text: 'Dia', value: 'weekday' },
         { text: 'Início', value: 'starttime' },
         { text: 'Fim', value: 'endtime' },
-        { text: 'Turma', value: 'turmas' },
+        { text: 'Turmas', value: 'turmas' },
         { text: 'Ações', value: 'action', sortable: false }
       ]
     }

@@ -37,7 +37,8 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
-    '@nuxtjs/vuetify'
+    '@nuxtjs/vuetify',
+    '@nuxtjs/moment'
   ],
   /*
    ** Nuxt.js modules
@@ -94,6 +95,15 @@ export default {
         }
       }
     ]
+  },
+  moment: {
+    defaultLocale: 'pt-br',
+    locales: ['pt-br'],
+    timezone: {
+      matchZones: /(America\/Sao_Paulo|UTC)/,
+      startYear: 2019,
+      endYear: 2021
+    }
   },
   /*
    ** vuetify module configuration
