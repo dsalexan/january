@@ -10,41 +10,57 @@
           </v-tab>
 
           <v-tab-item v-for="(core, index) in cores" :key="index">
-            <v-data-table
-              :headers="headers"
-              :items="materias"
-              :items-per-page="itemsPerPage"
-              @update:items-per-page="updateItemsPerPage"
-              :value="mappedSelectedItems"
-            >
-              <template v-slot:item.action="{ item }">
-                <!-- {{ item }} -->
-                <v-btn v-if="!selected.includes(item._id)" @click="selectItem(item)" icon>
-                  <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
-                </v-btn>
-                <v-btn v-else @click="deselectItem(item)" icon>
-                  <v-icon color="green">mdi-check-bold</v-icon>
-                </v-btn>
-              </template>
-              <template v-slot:item.weekday="{ item }">
-                {{ item.weekday.toString().toWeekday() }}
-              </template>
-              <template v-slot:item.starttime="{ item }">
-                <div v-for="(time, j) in item.starttime" :key="j">
-                  {{ $moment('2019-01-19 ' + item.starttime[j]).format('HH:mm') }}
-                </div>
-              </template>
-              <template v-slot:item.endtime="{ item }">
-                <div v-for="(time, j) in item.endtime" :key="j">
-                  {{ $moment('2019-01-19 ' + item.endtime[j]).format('HH:mm') }}
-                </div>
-              </template>
-              <template v-slot:item.turmas="{ item }">
-                <v-chip v-for="(turma, j) in item.turmas" :key="j" class="ma-2" small>
-                  {{ TURMAS[turma] }}
-                </v-chip>
-              </template>
-            </v-data-table>
+            <v-card class="elevation-0">
+              <v-card-title>
+                <v-text-field v-model="search" append-icon="mdi-magnify" label="Search" single-line hide-details></v-text-field>
+              </v-card-title>
+              <v-data-table
+                :headers="headers"
+                :items="searchableMaterias"
+                :items-per-page="itemsPerPage"
+                :search="search"
+                @update:items-per-page="updateItemsPerPage"
+                :value="mappedSelectedItems"
+              >
+                <template v-slot:item.action="{ item }">
+                  <!-- {{ item }} -->
+
+                  <v-tooltip v-if="!selected.includes(item._id)" left>
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on" @click="selectItem(item)" icon>
+                        <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Selecionar</span>
+                  </v-tooltip>
+
+                  <v-tooltip v-else left>
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on" @click="deselectItem(item)" icon>
+                        <v-icon color="green">mdi-check-bold</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Selecionado</span>
+                  </v-tooltip>
+                </template>
+
+                <template v-slot:item._dStartTime="{ item }">
+                  <div v-for="(time, j) in item._dStartTime" :key="j">
+                    {{ time }}
+                  </div>
+                </template>
+                <template v-slot:item._dEndTime="{ item }">
+                  <div v-for="(time, j) in item._dEndTime" :key="j">
+                    {{ time }}
+                  </div>
+                </template>
+                <template v-slot:item._dTurmas="{ item }">
+                  <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-2" small>
+                    {{ turma }}
+                  </v-chip>
+                </template>
+              </v-data-table>
+            </v-card>
           </v-tab-item>
         </v-tabs>
       </div>
@@ -53,6 +69,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { getData, setData } from 'nuxt-storage/local-storage'
 import { mapState, mapGetters, mapActions } from 'vuex'
 
@@ -62,8 +79,8 @@ export default {
   middleware: 'auth',
   data() {
     return {
-      TURMAS: LIST_TURMAS,
       tab: undefined,
+      search: undefined,
       itemsPerPage: getData('itemsPerPage') || 5,
       headers: [
         {
@@ -71,10 +88,10 @@ export default {
           align: 'left',
           value: 'name'
         },
-        { text: 'Dia', value: 'weekday' },
-        { text: 'Início', value: 'starttime' },
-        { text: 'Fim', value: 'endtime' },
-        { text: 'Turmas', value: 'turmas' },
+        { text: 'Dia', value: '_dWeekday' },
+        { text: 'Início', value: '_dStartTime' },
+        { text: 'Fim', value: '_dEndTime' },
+        { text: 'Turmas', value: '_dTurmas' },
         { text: 'Ações', value: 'action', sortable: false }
       ]
     }
@@ -107,6 +124,16 @@ export default {
     },
     mappedSelectedItems() {
       return this.selected.map((id) => this.materias.find((m) => m._id === id))
+    },
+    searchableMaterias() {
+      return _.cloneDeep(this.materias).map((m) => {
+        m._dWeekday = m.weekday.toString().toWeekday()
+        m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
+        m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
+        m._dTurmas = m.turmas.map((turma) => LIST_TURMAS[turma])
+
+        return m
+      })
     }
   },
   methods: {
@@ -144,16 +171,28 @@ export default {
       flex-grow: 1
 
       .v-window__container
-        &, .v-window-item, .v-data-table
-          height: 100%
+        height: 100%
+        display: flex
+        flex-direction: column
 
-        .v-data-table
-          display: flex
-          flex-direction: column
+        .v-window-item
+          flex-grow: 1
 
-          .v-data-table__wrapper
-            flex-grow: 1
+          .v-card
+            height: 100%
+            display: flex
+            flex-direction: column
 
-          .v-data-table__selected
-            background: #E8F5E9
+            .v-data-table
+              flex-grow: 1
+
+            .v-data-table
+              display: flex
+              flex-direction: column
+
+              .v-data-table__wrapper
+                flex-grow: 1
+
+              .v-data-table__selected
+                background: #E8F5E9
 </style>
