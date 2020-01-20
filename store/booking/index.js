@@ -45,30 +45,20 @@ export const actions = {
     state.list.splice(state.list.length, 0, res.data)
   },
   async confirm({ state, getters }, id = null) {
-    let res
+    const _ids = id === null ? getters.overview.pending.map((booking) => booking.materia) : [id]
 
-    if (id === null) {
-      res = await this.$axios.$post('me/booking', {
-        materia: getters.overview.pending.map((booking) => booking.materia),
+    for (const _id of _ids) {
+      if (!state.list.find((booking) => booking.materia === _id)) continue
+
+      const res = await this.$axios.$post('me/booking', {
+        materia: _id,
         status: 1
       })
-    } else {
-      if (!state.list.includes(id)) return
 
-      res = await this.$axios.$post('me/booking', {
-        materia: id,
-        status: 1
-      })
-    }
-
-    if (!res.success) return logError('Could not confirm booking in API', res.error)
-
-    if (id === null) {
-      state.list.forEach((booking) => {
-        if (booking.status === 0) booking.status = 1
-      })
-    } else {
-      state.list.find((booking) => booking.materia === id).status = 1
+      if (!res.success) return logError(`Could not confirm booking <${_id}> in API`, res.error)
+      else {
+        state.list.find((booking) => booking.materia === _id).status = 1
+      }
     }
   },
   async deselect({ state }, id) {
