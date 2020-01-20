@@ -158,10 +158,14 @@ export default {
   },
   created() {
     this.initMaterias()
+    this.initBookings()
   },
   methods: {
     ...mapActions('materias', {
       initMaterias: 'init'
+    }),
+    ...mapActions('booking', {
+      initBookings: 'init'
     }),
     toogleMenu() {
       this.miniVariant = !this.miniVariant

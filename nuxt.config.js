@@ -73,7 +73,7 @@ export default {
       local: {
         endpoints: {
           login: { url: 'auth/signin', method: 'post', propertyName: 'data.token' },
-          user: { url: 'auth/me', method: 'get', propertyName: 'data' },
+          user: { url: 'me', method: 'get', propertyName: 'data' },
           logout: false
         },
         tokenName: 'x-access-token',

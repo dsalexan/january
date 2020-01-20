@@ -147,7 +147,7 @@ export default {
       try {
         this.$toast.show('Salvando...')
 
-        await this.$axios.put(`auth/me`, {
+        await this.$axios.put(`me`, {
           email: this.email,
           name: this.name
         })
@@ -166,7 +166,7 @@ export default {
       try {
         this.$toast.show('Salvando...')
 
-        await this.$axios.put(`auth/me/password`, {
+        await this.$axios.put(`me/password`, {
           new_password: this.password,
           current_password: this.current_password
         })
