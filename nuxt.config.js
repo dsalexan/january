@@ -103,7 +103,8 @@ export default {
       matchZones: /(America\/Sao_Paulo|UTC)/,
       startYear: 2019,
       endYear: 2021
-    }
+    },
+    plugins: ['moment-range']
   },
   /*
    ** vuetify module configuration

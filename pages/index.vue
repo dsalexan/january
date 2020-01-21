@@ -48,39 +48,46 @@
                 <template v-slot:item="{ item }">
                   <tr
                     :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
+                    :style="item._dUnallowedTurma ? 'opacity: 0.65' : ''"
                   >
                     <td class="text-left">{{ item.name }}</td>
                     <td class="text-start py-4">
-                      <div v-for="(day, j) in item._dWeekday" :key="j">
-                        {{ day }}
-                      </div>
-                    </td>
-                    <td class="text-start">
-                      <div v-for="(time, j) in item._dStartTime" :key="j">
+                      <div v-for="(time, j) in item._dFullTime" :key="j">
                         {{ time }}
                       </div>
                     </td>
                     <td class="text-start">
-                      <div v-for="(time, j) in item._dEndTime" :key="j">
-                        {{ time }}
-                      </div>
-                    </td>
-                    <td class="text-start">
-                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-2" small>
+                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
                         {{ turma }}
                       </v-chip>
                     </td>
                     <td class="text-start">
-                      <v-tooltip v-if="item._dStatus === undefined" left>
+                      <div v-html="item._dVacancy"></div>
+                    </td>
+                    <td class="text-start">
+                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
                         <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" @click="selectItem(item)" icon>
-                            <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
+                          <v-btn v-on="on" icon>
+                            <v-icon color="red">mdi-currency-usd</v-icon>
                           </v-btn>
                         </template>
-                        <span>Selecionar</span>
+                        <span>Atividade com Custo Extra</span>
+                      </v-tooltip>
+                    </td>
+                    <td class="text-start">
+                      <v-tooltip v-if="item._dStatus === undefined" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" @click="() => (item._dUnallowedTurma ? () => {} : selectItem(item))" icon>
+                            <v-icon v-if="!item._dUnallowedTurma">mdi-checkbox-blank-circle-outline</v-icon>
+                            <v-icon v-else>mdi-cancel</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>{{
+                          item._dUnallowedTurma ? 'Essa atividade não está disponível para sua turma' : 'Selecionar'
+                        }}</span>
                       </v-tooltip>
 
-                      <v-tooltip v-else-if="item._dStatus === 'confirmed'" left>
+                      <v-tooltip v-else-if="item._dStatus === 'confirmed'" bottom>
                         <template v-slot:activator="{ on }">
                           <v-btn v-on="on" @click="confirmedDeselectItem(item)" icon>
                             <v-icon color="green">mdi-check-all</v-icon>
@@ -89,7 +96,7 @@
                         <span>Reserva Confirmada</span>
                       </v-tooltip>
 
-                      <v-tooltip v-else-if="item._dStatus === 'pending'" left>
+                      <v-tooltip v-else-if="item._dStatus === 'pending'" bottom>
                         <template v-slot:activator="{ on }">
                           <v-btn v-on="on" @click="deselectItem(item)" icon>
                             <v-icon color="blue">mdi-check</v-icon>
@@ -158,10 +165,10 @@ export default {
           align: 'left',
           value: 'name'
         },
-        { text: 'Dia', value: '_dWeekday' },
-        { text: 'Início', value: '_dStartTime' },
-        { text: 'Fim', value: '_dEndTime' },
+        { text: 'Horário', value: '_dWeekday' },
         { text: 'Turmas', value: '_dTurmas' },
+        { text: 'Vagas Disponíveis', value: '_dVacancy' },
+        { text: 'Custo Extra', value: 'tags' },
         { text: 'Ações', value: 'action', sortable: false }
       ]
     }
@@ -197,18 +204,34 @@ export default {
       return this.selected.map((booking) => this.materias.find((m) => m._id === booking.materia))
     },
     searchableMaterias() {
-      return _.cloneDeep(this.materias).map((m) => {
-        m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
-        m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-        m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-        m._dTurmas = m.turmas.map((turma) => LIST_TURMAS[turma])
+      return _.cloneDeep(this.materias)
+        .map((m) => {
+          m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
+          m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
+          m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
+          m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]}, ${m._dStartTime[i]} às ${m._dEndTime[i]}`)
 
-        m._dStatus = undefined
-        const booked = this.selected.find((booking) => booking.materia === m._id)
-        if (booked) m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
+          m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])
 
-        return m
-      })
+          const bookings = m.bookings.filter((b) => b.status === 1).length
+          m._dVacancy = m.maximum - bookings
+          if (m._dVacancy <= 0) {
+            m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
+              -1 +
+              1}</div>`
+          } else {
+            m._dVacancy = `<b>${m._dVacancy}</b>`
+          }
+
+          m._dStatus = undefined
+          const booked = this.selected.find((booking) => booking.materia === m._id)
+          if (booked) m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
+
+          m._dUnallowedTurma = m.turmas !== null && !m.turmas.includes(this.$auth.user.turma)
+
+          return m
+        })
+        .filter((m) => !m._dUnallowedTurma)
     }
   },
   methods: {

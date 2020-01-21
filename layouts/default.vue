@@ -147,13 +147,14 @@ export default {
         .join('')
     },
     bookingColor() {
-      if (this.overview.state === 'waiting') {
-        return 'blue'
-      } else if (this.overview.state === 'problem') {
-        return 'red'
-      } else {
-        return 'green'
-      }
+      return 'red'
+      // if (this.overview.state === 'waiting') {
+      //   return 'blue'
+      // } else if (this.overview.state === 'problem') {
+      //   return 'red'
+      // } else {
+      //   return 'green'
+      // }
     }
   },
   created() {

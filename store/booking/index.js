@@ -9,12 +9,42 @@ export const state = () => ({
 })
 
 export const getters = {
-  overview(state) {
+  overview(state, getters, rootState) {
     // gives overview of not read new status
-    return {
+    const o = {
       pending: state.list.filter((b) => b.status === 0),
       confirmed: state.list.filter((b) => b.status === 1)
     }
+
+    if (state.list.length === 0 || rootState.materias.list.length === 0) return o
+
+    o.blocking = o.pending.filter((b) => {
+      // TODO: Add moment range and check if time overlaps, if it does, then is a blocking booking and can not be confirmed
+      // https://stackoverflow.com/questions/44800471/check-if-times-overlap-using-moment
+      // against confirmed
+      const c = o.confirmed
+        .filter((cb) => cb.weekday.some((wd) => b.weekday.includes(wd)))
+        .map((cb) => ({
+          start: cb.starttime,
+          end: cb.endtime
+        }))
+
+      if (c.length > 0) debugger
+
+      // against pending
+      const p = o.pending
+        .filter((cb) => cb.materia !== b.materia && cb.weekday.some((wd) => b.weekday.includes(wd)))
+        .map((cb) => ({
+          start: cb.starttime,
+          end: cb.endtime
+        }))
+
+      if (p.length > 0) debugger
+
+      return true
+    })
+
+    return o
   }
 }
 
