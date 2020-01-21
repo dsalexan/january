@@ -37,17 +37,46 @@
                     </div>
                   </span>
                 </v-tooltip>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-on="on"
+                      v-show="overview.blocking.length > 0"
+                      class="ml-2"
+                      tile
+                      depressed
+                      color="amber lighten-5 amber--text"
+                    >
+                      <v-icon left>mdi-alert</v-icon>
+                      Choque de Horário ({{ overview.blocking.length }})
+                    </v-btn>
+                  </template>
+                  <span>
+                    <b>Você possui atividades em conflito de horário:</b>
+                    <div v-for="(booking, j) in overview.blocking" :key="j">
+                      <span class="grey--text text--lighten-2">
+                        ({{ (materias.find((m) => m._id === booking.materia) || {}).core }})
+                      </span>
+
+                      {{ (materias.find((m) => m._id === booking.materia) || {}).name }}
+                    </div>
+                  </span>
+                </v-tooltip>
               </v-card-title>
               <v-data-table
                 :headers="headers"
-                :items="searchableMaterias"
+                :items="core.searchableMaterias"
                 :items-per-page="itemsPerPage"
                 :search="search"
                 @update:items-per-page="updateItemsPerPage"
               >
                 <template v-slot:item="{ item }">
                   <tr
-                    :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
+                    :class="{
+                      'blue lighten-5': item._dStatus === 'pending',
+                      'green lighten-5': item._dStatus === 'confirmed',
+                      'amber lighten-5': item._dStatus === 'blocking'
+                    }"
                     :style="item._dUnallowedTurma ? 'opacity: 0.65' : ''"
                   >
                     <td class="text-left">{{ item.name }}</td>
@@ -102,7 +131,25 @@
                             <v-icon color="blue">mdi-check</v-icon>
                           </v-btn>
                         </template>
-                        <span>Pendente Confirmação</span>
+                        <span>Confirmação Pendente</span>
+                      </v-tooltip>
+
+                      <v-tooltip v-else-if="item._dStatus === 'blocking'" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" @click="deselectItem(item)" icon>
+                            <v-icon color="amber darken-1">mdi-alert</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>
+                          <b>Conflito de Horário</b>
+                          <div v-for="(booking, j) in overview.blocking.filter((b) => b.materia !== item._id)" :key="j">
+                            <span class="grey--text text--lighten-2">
+                              ({{ (materias.find((m) => m._id === booking.materia) || {}).core }})
+                            </span>
+
+                            {{ (materias.find((m) => m._id === booking.materia) || {}).name }}
+                          </div>
+                        </span>
                       </v-tooltip>
                     </td>
                   </tr>
@@ -184,19 +231,24 @@ export default {
     cores() {
       return [
         {
-          name: 'Núcleo Planck de Artes'
+          name: 'Núcleo Planck de Artes',
+          searchableMaterias: this.searchableMaterias.filter((m) => m.core === 'Núcleo Planck de Artes')
         },
         {
-          name: 'Núcleo Planck de Esportes'
+          name: 'Núcleo Planck de Esportes',
+          searchableMaterias: this.searchableMaterias.filter((m) => m.core === 'Núcleo Planck de Esportes')
         },
         {
-          name: 'Núcleo Planck de Tecnologia'
+          name: 'Núcleo Planck de Tecnologia',
+          searchableMaterias: this.searchableMaterias.filter((m) => m.core === 'Núcleo Planck de Tecnologia')
         },
         {
-          name: 'Planck Internacional'
+          name: 'Planck Internacional',
+          searchableMaterias: this.searchableMaterias.filter((m) => m.core === 'Planck Internacional')
         },
         {
-          name: 'Programa Planck de Preparação Olímpica'
+          name: 'Programa Planck de Preparação Olímpica',
+          searchableMaterias: this.searchableMaterias.filter((m) => m.core === 'Programa Planck de Preparação Olímpica')
         }
       ]
     },
@@ -225,7 +277,10 @@ export default {
 
           m._dStatus = undefined
           const booked = this.selected.find((booking) => booking.materia === m._id)
-          if (booked) m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
+          if (booked) {
+            if (this.overview.blocking.find((b) => b.materia === m._id)) m._dStatus = 'blocking'
+            else m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
+          }
 
           m._dUnallowedTurma = m.turmas !== null && !m.turmas.includes(this.$auth.user.turma)
 

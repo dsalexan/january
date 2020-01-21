@@ -19,7 +19,7 @@
             ></v-text-field>
           </div>
         </div>
-        <div class="field mb-6">
+        <div class="field mb-2">
           <div class="control">
             <v-text-field
               v-model="email"
@@ -31,6 +31,11 @@
               filled
               required
             ></v-text-field>
+          </div>
+        </div>
+        <div class="field mb-6">
+          <div class="control">
+            <v-select v-model="turma" :items="turmasSelect" label="Turma" hide-details filled></v-select>
           </div>
         </div>
         <div class="control">
@@ -91,15 +96,21 @@
 </template>
 
 <script>
+import { LIST_TURMAS } from '../utils/turmas'
 export default {
   data() {
     return {
       name: this.$auth.user.name,
       email: this.$auth.user.email,
+      turma: this.$auth.user.turma,
       password: '',
       confirm_password: '',
       current_password: '',
-      error: null
+      error: null,
+      turmasSelect: LIST_TURMAS.map((t, i) => ({
+        text: t,
+        value: i
+      }))
     }
   },
   computed: {
@@ -107,7 +118,7 @@ export default {
       return this.$auth.user
     },
     isEditFormFilled() {
-      return !this.email.isEmpty() && !this.name.isEmpty()
+      return !this.email.isEmpty() && !this.name.isEmpty() && this.turma !== undefined
     },
     isPasswordFormFilled() {
       return !this.current_password.isEmpty() && !this.password.isEmpty() && this.confirmedPassword
@@ -124,6 +135,7 @@ export default {
         await this.$axios.post('auth/register', {
           name: this.name,
           email: this.email,
+          turma: this.turma,
           password: this.password
         })
 
@@ -182,6 +194,7 @@ export default {
     resetForm() {
       this.email = this.$auth.user.email
       this.name = this.$auth.user.name
+      this.turma = this.$auth.user.turma
       this.current_password = ''
       this.password = ''
       this.confirm_password = ''

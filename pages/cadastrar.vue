@@ -33,6 +33,11 @@
       </div>
       <div class="field mb-2">
         <div class="control">
+          <v-select v-model="turma" :items="turmasSelect" label="Turma" hide-details filled></v-select>
+        </div>
+      </div>
+      <div class="field mb-2">
+        <div class="control">
           <v-text-field
             v-model="password"
             hide-details
@@ -72,20 +77,32 @@
 </template>
 
 <script>
+import { LIST_TURMAS } from '../utils/turmas'
 export default {
   layout: 'empty',
   data() {
     return {
       name: '',
       email: '',
+      turma: undefined,
       password: '',
       confirm_password: '',
-      error: null
+      error: null,
+      turmasSelect: LIST_TURMAS.map((t, i) => ({
+        text: t,
+        value: i
+      }))
     }
   },
   computed: {
     isFormFilled() {
-      return !this.email.isEmpty() && !this.password.isEmpty() && !this.name.isEmpty() && this.confirmedPassword
+      return (
+        !this.email.isEmpty() &&
+        this.turma !== undefined &&
+        !this.password.isEmpty() &&
+        !this.name.isEmpty() &&
+        this.confirmedPassword
+      )
     },
     confirmedPassword() {
       return this.password === this.confirm_password
@@ -99,6 +116,7 @@ export default {
         await this.$axios.post('auth/register', {
           name: this.name,
           email: this.email,
+          turma: this.turma,
           password: this.password
         })
 

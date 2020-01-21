@@ -51,18 +51,17 @@
                         {{ time }}
                       </div>
                     </td>
-                    <template v-if="tabItem.status === 'confirmed'">
-                      <td class="text-start">
-                        <div v-html="item._dStackPosition"></div>
-                      </td>
-                    </template>
-
                     <td class="text-start">
                       <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
                         {{ turma }}
                       </v-chip>
                     </td>
-                    <td v-if="tabItem.status === 'pending'" class="text-start">
+                    <template v-if="tabItem.status === 'confirmed'">
+                      <td class="text-start">
+                        <div v-html="item._dStackPosition"></div>
+                      </td>
+                    </template>
+                    <td v-else-if="tabItem.status === 'pending'" class="text-start">
                       <div v-html="item._dVacancy"></div>
                     </td>
                     <td class="text-start">
@@ -220,7 +219,8 @@ export default {
         m._dStackPosition = null
         const booked = this.selected.find((booking) => booking.materia === m._id)
         if (booked) {
-          m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
+          if (this.overview.blocking.find((b) => b.materia === m._id)) m._dStatus = 'blocking'
+          else m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
           m._dStackPosition =
             booked.position <= m.maximum
               ? '<b>Inscrito</b>'
