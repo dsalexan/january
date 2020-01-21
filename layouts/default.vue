@@ -25,7 +25,7 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  :color="$route.name === 'perfil' ? 'amber accent-4' : ''"
+                  :color="$route.name === 'perfil' ? 'blue accent-4' : ''"
                   to="/perfil"
                   nuxt
                 >
@@ -52,15 +52,33 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  :color="$route.name === 'index' ? 'amber accent-4' : ''"
+                  :color="$route.name === 'index' ? 'blue accent-4' : ''"
                   to="/"
                   nuxt
                 >
-                  <v-icon :left="!miniVariant">mdi-home</v-icon>
-                  <span v-if="!miniVariant">Início</span>
+                  <v-badge
+                    :color="overview.blocking.length ? `red darken-1` : ''"
+                    :value="miniVariant && overview.quantity"
+                    overlap
+                    dot
+                  >
+                    <v-icon :left="!miniVariant">mdi-home</v-icon>
+                  </v-badge>
+                  <span v-if="!miniVariant">
+                    <v-badge :color="overview.blocking.length ? `red darken-1` : ''" class="small-badge" dot>
+                      Início
+                    </v-badge>
+                  </span>
                 </v-btn>
               </template>
-              <span>Início</span>
+              <span>
+                <div style="width: 100%; text-align: center;">
+                  Início
+                  <div v-if="overview.blocking.length" class="amber--text text--lighten-2">
+                    <b>{{ overview.blocking.length }}</b> Conflito{{ overview.blocking.length > 1 ? 's' : '' }}
+                  </div>
+                </div>
+              </span>
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
@@ -73,17 +91,33 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  :color="$route.name === 'reservas' ? 'amber accent-4' : ''"
+                  :color="$route.name === 'reservas' ? 'blue accent-4' : ''"
                   to="/reservas"
                   nuxt
                 >
-                  <v-badge :color="`${bookingColor} darken-1`" :value="miniVariant && overview.quantity" overlap dot>
+                  <v-badge
+                    :color="overview.pending.length ? `red darken-1` : ''"
+                    :value="miniVariant && overview.quantity"
+                    overlap
+                    dot
+                  >
                     <v-icon :left="!miniVariant">mdi-bookmark</v-icon>
                   </v-badge>
-                  <span v-if="!miniVariant">Reservas</span>
+                  <span v-if="!miniVariant">
+                    <v-badge :color="overview.pending.length ? `red darken-1` : ''" class="small-badge" dot>
+                      Reservas
+                    </v-badge>
+                  </span>
                 </v-btn>
               </template>
-              <span>Minhas Reservas</span>
+              <span>
+                <div style="width: 100%; text-align: center;">
+                  Minhas Reservas
+                  <div v-if="overview.pending.length" class="blue--text text--lighten-3">
+                    <b>{{ overview.pending.length }}</b> Pendência{{ overview.pending.length > 1 ? 's' : '' }}
+                  </div>
+                </div>
+              </span>
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
@@ -145,16 +179,6 @@ export default {
         .split(' ')
         .map((n) => n[0])
         .join('')
-    },
-    bookingColor() {
-      return 'red'
-      // if (this.overview.state === 'waiting') {
-      //   return 'blue'
-      // } else if (this.overview.state === 'problem') {
-      //   return 'red'
-      // } else {
-      //   return 'green'
-      // }
     }
   },
   created() {
@@ -193,4 +217,9 @@ export default {
       height: 48px !important
       width: 48px !important
       box-shadow: none
+
+.small-badge::v-deep
+  .v-badge__badge
+    height: 5px
+    width: 5px
 </style>

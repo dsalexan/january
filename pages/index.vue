@@ -272,7 +272,8 @@ export default {
               -1 +
               1}</div>`
           } else {
-            m._dVacancy = `<b>${m._dVacancy}</b>`
+            // eslint-disable-next-line eqeqeq
+            m._dVacancy = `<b>${m._dVacancy == 100 ? '' : m._dVacancy}</b>`
           }
 
           m._dStatus = undefined
