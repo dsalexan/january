@@ -91,7 +91,8 @@
                       </v-chip>
                     </td>
                     <td class="text-start">
-                      <div v-html="item._dVacancy"></div>
+                      <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
+                      <v-icon v-else>mdi-infinity</v-icon>
                     </td>
                     <td class="text-start">
                       <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
@@ -273,7 +274,7 @@ export default {
               1}</div>`
           } else {
             // eslint-disable-next-line eqeqeq
-            m._dVacancy = `<b>${m._dVacancy == 100 ? '' : m._dVacancy}</b>`
+            m._dVacancy = `<b>${m.maximum == 100 ? '<v-icon>mdi-infinity</v-icon>' : m._dVacancy}</b>`
           }
 
           m._dStatus = undefined
