@@ -7,7 +7,7 @@
         </v-col>
         <v-col cols="8" class="d-flex justify-center align-center showcase">
           <div class="headline font-weight-bold">
-            JANUARY PROJECT
+            <v-img :src="image" contain></v-img>
           </div>
         </v-col>
       </v-row>
@@ -19,7 +19,7 @@
 export default {
   data() {
     return {
-      image: require('@/assets/img/techno_bg.jpg')
+      image: require('@/assets/img/fundo1.png')
     }
   }
 }
