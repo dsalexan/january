@@ -5,9 +5,9 @@
         <v-col cols="4" class="d-flex justify-center align-center">
           <nuxt />
         </v-col>
-        <v-col cols="8" class="d-flex justify-center align-center showcase">
+        <v-col :style="{ background: `url(${image})` }" cols="8" class="d-flex justify-center align-center showcase">
           <div class="headline font-weight-bold">
-            <v-img :src="image" contain></v-img>
+            <!-- <v-img :src="image" cover></v-img> -->
           </div>
         </v-col>
       </v-row>

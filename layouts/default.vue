@@ -43,7 +43,7 @@
       <v-spacer></v-spacer>
 
       <v-list>
-        <v-list-item>
+        <v-list-item v-if="hasPage('home')">
           <v-list-item-content>
             <v-tooltip right>
               <template v-slot:activator="{ on }">
@@ -82,7 +82,7 @@
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item>
+        <v-list-item v-if="hasPage('reservas')">
           <v-list-item-content>
             <v-tooltip right>
               <template v-slot:activator="{ on }">
@@ -116,6 +116,33 @@
                   <div v-if="overview.pending.length" class="blue--text text--lighten-3">
                     <b>{{ overview.pending.length }}</b> Pendência{{ overview.pending.length > 1 ? 's' : '' }}
                   </div>
+                </div>
+              </span>
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-for="(page, x) in otherPages" :key="x">
+          <v-list-item-content>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :fab="miniVariant"
+                  :icon="miniVariant"
+                  :text="!miniVariant"
+                  :color="$route.name === page.route ? 'blue accent-4' : ''"
+                  :to="`/${page.route}`"
+                  nuxt
+                >
+                  <v-icon :left="!miniVariant">mdi-{{ page.icon }}</v-icon>
+                  <span v-if="!miniVariant">
+                    {{ page.name }}
+                  </span>
+                </v-btn>
+              </template>
+              <span>
+                <div style="width: 100%; text-align: center;">
+                  {{ page.label }}
                 </div>
               </span>
             </v-tooltip>
@@ -179,6 +206,12 @@ export default {
         .split(' ')
         .map((n) => n[0])
         .join('')
+    },
+    otherPages() {
+      return (this.user.pages || []).filter((page) => page.route !== 'home' && page.route !== 'reservas')
+    },
+    hasPage() {
+      return (route) => (this.user.pages || []).find((page) => page.route === route)
     }
   },
   created() {

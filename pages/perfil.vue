@@ -128,33 +128,6 @@ export default {
     }
   },
   methods: {
-    async modify() {
-      try {
-        this.$toast.show('Cadastrando...')
-
-        await this.$axios.post('auth/register', {
-          name: this.name,
-          email: this.email,
-          turma: this.turma,
-          password: this.password
-        })
-
-        this.$toast.show('Entrando...')
-
-        await this.$auth.loginWith('local', {
-          data: {
-            email: this.email,
-            password: this.password
-          }
-        })
-        this.$toast.success('Autenticado com Sucesso')
-
-        this.$router.push('/')
-      } catch (e) {
-        this.error = e.response.data.error
-        this.$toast.error(this.error)
-      }
-    },
     async edit() {
       try {
         this.$toast.show('Salvando...')

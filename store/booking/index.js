@@ -12,7 +12,8 @@ const logError = error.extend('booking')
 
 export const state = () => ({
   __inited: false,
-  list: []
+  list: [],
+  all: []
 })
 
 export const getters = {
@@ -84,18 +85,41 @@ export const getters = {
 }
 
 export const actions = {
-  async init({ state }, force = false) {
-    if (state.__inited && !force) return
-
+  async userBookings({ state }, force = false) {
     const res = await this.$axios.$get(`me/booking`)
 
-    if (!res.success) logError('Error on fetching booking from API', res.error)
-    else {
+    if (!res.success) {
+      logError('Error on fetching booking from API', '/me/booking', res.error)
+      throw new Error('Error on fetching booking from API')
+    } else {
       state.list = res.data
       log(`Initialized booking store with ${state.list.length} entries`, state.list)
-
-      state.__inited = true
     }
+  },
+  async allBookings({ state, rootState }, force = false) {
+    let res
+    try {
+      res = await this.$axios.$get(`booking`)
+    } catch (e) {
+      res = {
+        success: false,
+        error: e
+      }
+    }
+
+    if (!res.success) {
+      logError('Error on fetching bookings from API', '/booking', res.error)
+    } else {
+      state.all = res.data
+      log(`Initialized global booking store with ${state.list.length} entries`, state.all)
+    }
+  },
+  async init({ state, dispatch }, force = false) {
+    if (state.__inited && !force) return
+
+    await Promise.all([dispatch('userBookings'), dispatch('allBookings')])
+
+    state.__inited = true
   },
   async select({ state, dispatch }, id) {
     if (state.list.includes(id)) return

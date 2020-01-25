@@ -70,7 +70,7 @@ export default {
         } else {
           this.$toast.success('Autenticado com Sucesso')
 
-          this.$router.push('/')
+          this.$router.push(this.$auth.user.home || '/')
         }
       } catch (e) {
         this.error = e.response.data.error
