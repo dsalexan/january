@@ -1,7 +1,7 @@
 <template>
   <v-layout class="page-index pa-10" column justify-center align-center>
     <v-flex class="d-flex  flex-column justify-center align-center" style="width: 100%;">
-      <h2 class="display-2 has-text-centered mb-8 font-weight-bold">Início</h2>
+      <h2 class="display-2 has-text-centered mb-8 font-weight-bold">Matrícula nas atividades extracurriculares</h2>
       <!-- <div class="has-text-centered mb-1">Primeiro, escolha um núcleo de matérias.</div> -->
       <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 90%; flex-grow: 1;">
         <v-tabs v-model="tab" centered class="d-flex flex-column" style="height: 100%;">
@@ -214,8 +214,13 @@ export default {
           value: 'name'
         },
         { text: 'Horário', value: '_dWeekday' },
+        // SEPARAR em dia da semana | Horário |
         { text: 'Turmas', value: '_dTurmas' },
+        // adicionar MIN para turma
+        // adicionar MAX para turma
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
+        // TROCAS Custo extra por atividades eletivas
+        // COLOCAR Atividades complementares para aquelas que são 'gratuitas'
         { text: 'Custo Extra', value: 'tags' },
         { text: 'Ações', value: 'action', sortable: false }
       ]
@@ -262,7 +267,8 @@ export default {
           m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
           m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
           m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-          m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]}, ${m._dStartTime[i]} às ${m._dEndTime[i]}`)
+          m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]},${m._dStartTime[i]} as ${m._dEndTime[i]}`)
+          // NOME ATIVIDADE | ATIVIDADE COMPLEMENTAR | ATIVIDADE ELETIVA | DIA DA SEMANA | HORÁRIO | MIN | MAX | VAGAS DISPONÍVEIS | AÇÕES.
 
           m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])
 
