@@ -66,16 +66,6 @@
                       <v-icon v-else>mdi-infinity</v-icon>
                     </td>
                     <td class="text-start">
-                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" icon>
-                            <v-icon color="red">mdi-currency-usd</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Atividade com Custo Extra</span>
-                      </v-tooltip>
-                    </td>
-                    <td class="text-start">
                       <v-tooltip v-if="item._dStatus === 'confirmed'" bottom>
                         <template v-slot:activator="{ on }">
                           <v-btn v-on="on" @click="confirmedDeselectItem(item)" icon>
@@ -105,6 +95,16 @@
                           </v-btn>
                         </template>
                         <span>Remover</span>
+                      </v-tooltip>
+                    </td>
+                    <td class="text-start">
+                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" icon>
+                            <v-icon color="red">mdi-currency-usd</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Atividade com Custo Extra</span>
                       </v-tooltip>
                     </td>
                   </tr>
@@ -170,8 +170,8 @@ export default {
         { text: 'Horário', value: '_dWeekday' },
         { text: 'Turmas', value: '_dTurmas' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
-        { text: 'Custo Extra', value: 'tags' },
-        { text: 'Ações', value: 'action', sortable: false }
+        { text: 'Ações', value: 'action', sortable: false },
+        { text: 'Custo Extra', value: 'tags' }
       ],
       headersConfirmed: [
         {
@@ -181,8 +181,8 @@ export default {
         },
         { text: 'Situação', value: '_dStackPosition' },
         { text: 'Turmas', value: '_dTurmas' },
-        { text: 'Ações', value: 'tags' },
-        { text: 'Custo Extra', value: 'action', sortable: false }
+        { text: 'Ações', value: 'tags', sortable: false },
+        { text: 'Custo Extra', value: 'action' }
       ]
     }
   },
