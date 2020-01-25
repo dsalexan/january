@@ -1,6 +1,9 @@
 <template>
   <section class="page-cadastrar section mx-10">
-    <h2 class="title has-text-centered mb-6">Cadastre-se!</h2>
+    <h2 class="title has-text-centered mb-6">Cadastre-se no nosso sistema!</h2>
+    <div class="has-text-centered mt-6 mb-6" style="font-size: 0.9em">
+      O cadastro é individual para cada aluno e deve ser preenchido conforme indicado:
+    </div>
 
     <form @submit.prevent="register" method="post">
       <div class="field mb-2">
@@ -8,7 +11,7 @@
           <v-text-field
             v-model="name"
             hide-details
-            label="Nome"
+            label="Aluno/Responsável (ex: Enzo/Carlos)"
             type="text"
             autocomplete="Nome"
             name="name"
@@ -22,7 +25,7 @@
           <v-text-field
             v-model="email"
             hide-details
-            label="Email"
+            label="Seu melhor email"
             type="email"
             name="email"
             autocomplete="email"
@@ -33,7 +36,7 @@
       </div>
       <div class="field mb-2">
         <div class="control">
-          <v-select v-model="turma" :items="turmasSelect" label="Turma" hide-details filled></v-select>
+          <v-select v-model="turma" :items="turmasSelect" label="Turma " hide-details filled></v-select>
         </div>
       </div>
       <div class="field mb-2">
@@ -70,8 +73,8 @@
       </div>
     </form>
 
-    <div class="has-text-centered mt-12" style="font-size: 0.8em; text-align: center">
-      Já tem uma conta? <nuxt-link to="/entrar">Entrar</nuxt-link>
+    <div class="has-text-centered mt-12" style="font-size: 1.1em; text-align: center">
+      Já tem uma conta? <nuxt-link to="/entrar">Clique aqui!</nuxt-link>
     </div>
   </section>
 </template>

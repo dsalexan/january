@@ -5,7 +5,7 @@
       <!-- <div class="has-text-centered mb-12">Atualize as informações do seu perfil ou modifique sua senha.</div> -->
       <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 90%; flex-grow: 1;">
         <v-tabs v-model="tab" :color="tab ? 'green' : ''" centered class="d-flex flex-column" style="height: 100%;">
-          <v-tab>Pendendes</v-tab>
+          <v-tab>Não Confirmadas</v-tab>
           <v-tab>Confirmadas</v-tab>
 
           <v-tab-item v-for="(tabItem, index) in tabItems" :key="index">
@@ -124,7 +124,7 @@
                 >.
               </p>
 
-              <p>Caso no futuro você deseje se reinscrever nessa atividade, sua posição na fila de espera poderá ser maior.</p>
+              <p>Caso no futuro queira se reinscrever nessa atividade, sua posição na fila de espera poderá ser maior.</p>
             </v-card-text>
 
             <v-card-actions>

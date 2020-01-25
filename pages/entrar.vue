@@ -1,6 +1,6 @@
 <template>
   <section class="page-entrar section mx-10">
-    <h2 class="title has-text-centered mb-6">Bem Vindo</h2>
+    <h2 class="title has-text-centered mb-6">Olá! Vamos começar nossa jornada?</h2>
 
     <form @submit.prevent="login" method="post">
       <div class="field mb-2">
@@ -8,7 +8,7 @@
           <v-text-field
             v-model="email"
             hide-details
-            label="Email"
+            label="Email cadastrado"
             type="text"
             name="email"
             autocomplete="email"
@@ -33,8 +33,8 @@
         <v-btn :disabled="!isFormFilled" type="submit" block tile color="amber accent-4">Entrar</v-btn>
       </div>
     </form>
-    <div class="has-text-centered mt-12" style="font-size: 0.8em; text-align: center">
-      <p>Não tem uma conta? <nuxt-link to="/cadastrar">Cadastre-se</nuxt-link></p>
+    <div class="has-text-centered mt-12" style="font-size: 1.1em; text-align: center">
+      <p>É o seu primeiro acesso? <nuxt-link to="/cadastrar">Clique aqui!</nuxt-link></p>
     </div>
   </section>
 </template>
