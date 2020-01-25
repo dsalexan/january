@@ -181,8 +181,8 @@ export default {
         },
         { text: 'Situação', value: '_dStackPosition' },
         { text: 'Turmas', value: '_dTurmas' },
-        { text: 'Custo Extra', value: 'tags' },
-        { text: 'Ações', value: 'action', sortable: false }
+        { text: 'Ações', value: 'tags' },
+        { text: 'Custo Extra', value: 'action', sortable: false }
       ]
     }
   },
