@@ -11,7 +11,7 @@
           <v-text-field
             v-model="name"
             hide-details
-            label="Aluno/Responsável (ex: Enzo/Carlos)"
+            label="Nome e sobrenome do aluno"
             type="text"
             autocomplete="Nome"
             name="name"
@@ -94,7 +94,7 @@ export default {
       turmasSelect: LIST_TURMAS.map((t, i) => ({
         text: t,
         value: i
-      }))
+      })).filter((item) => item.value > 4) // filtrando as turmas do /util
     }
   },
   computed: {
