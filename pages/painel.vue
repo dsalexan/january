@@ -14,8 +14,9 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       v-on="on"
-                      @click="sendEmails"
                       :disabled="mappedBookings.length === 0"
+                      :href="`${$axios.defaults.baseURL}/booking/export?x-access-token=${token}`"
+                      target="_blank"
                       tile
                       depressed
                       color="green lighten-5 green--text"
@@ -33,7 +34,7 @@
                   <template v-slot:activator="{ on }">
                     <v-btn
                       v-on="on"
-                      @click="exportCSV"
+                      @click="sendEmails"
                       :disabled="mappedBookings.length === 0"
                       tile
                       depressed
@@ -202,6 +203,9 @@ export default {
           headers: this.headers
         }
       ]
+    },
+    token() {
+      return this.$auth.$storage._state['_token.local']
     }
   },
   methods: {
@@ -225,15 +229,10 @@ export default {
       this.confirm()
     },
     sendEmail() {
-      console.log('SEND EMAIL')
+      console.log(this.$auth)
     },
     sendEmails() {
       console.log('SEND ALL EMAILS')
-    },
-    async exportCSV() {
-      const res = await this.$axios.$get(`booking/export`)
-
-      // TODO: Export to CSV
     }
   }
 }
