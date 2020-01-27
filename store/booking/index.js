@@ -81,6 +81,23 @@ export const getters = {
     o.pending = o.pending.filter((b) => o.blocking.find((bb) => bb.materia === b.materia) === undefined)
 
     return o
+  },
+  users(state) {
+    const _users = {}
+
+    state.all.map((booking) => {
+      if (!(booking.student in _users)) {
+        _users[booking.student] = {
+          name: booking.name_student,
+          student: booking.student,
+          bookings: []
+        }
+      }
+
+      _users[booking.student].bookings.push(booking)
+    })
+
+    return Object.values(_users)
   }
 }
 

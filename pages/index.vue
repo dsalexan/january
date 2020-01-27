@@ -3,7 +3,7 @@
     <v-flex class="d-flex  flex-column justify-center align-center" style="width: 100%;">
       <h2 class="display-2 has-text-centered mb-8 font-weight-bold">Matrícula nas atividades extracurriculares</h2>
       <!-- <div class="has-text-centered mb-1">Primeiro, escolha um núcleo de matérias.</div> -->
-      <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 90%; flex-grow: 1;">
+      <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 100%; flex-grow: 1;">
         <v-tabs v-model="tab" centered class="d-flex flex-column" style="height: 100%;">
           <v-tab v-for="(core, index) in cores" :key="index" class="core">
             {{ core.name }}
@@ -80,6 +80,26 @@
                     :style="item._dUnallowedTurma ? 'opacity: 0.65' : ''"
                   >
                     <td class="text-left">{{ item.name }}</td>
+                    <td class="text-center">
+                      <v-btn v-on="on" v-if="!item.tags.includes('custo extra')" icon>
+                        <v-icon color="blue">mdi-school</v-icon>
+                      </v-btn>
+                    </td>
+                    <td class="text-center">
+                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" icon>
+                            <v-icon color="red">mdi-currency-usd</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>R$ 180,00</span>
+                      </v-tooltip>
+                    </td>
+                    <td class="text-start py-4">
+                      <div v-for="(day, j) in item._dWeekday" :key="j">
+                        {{ day }}
+                      </div>
+                    </td>
                     <td class="text-start py-4">
                       <div v-for="(time, j) in item._dFullTime" :key="j">
                         {{ time }}
@@ -91,18 +111,15 @@
                       </v-chip>
                     </td>
                     <td class="text-start">
-                      <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
+                      {{ item.minimum === 0 ? '' : item.minimum }}
+                    </td>
+                    <td class="text-start">
+                      <template v-if="item.maximum !== 100">{{ item.maximum }}</template>
                       <v-icon v-else>mdi-infinity</v-icon>
                     </td>
                     <td class="text-start">
-                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" icon>
-                            <v-icon color="red">mdi-currency-usd</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Atividade com Custo Extra</span>
-                      </v-tooltip>
+                      <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
+                      <v-icon v-else>mdi-infinity</v-icon>
                     </td>
                     <td class="text-start">
                       <v-tooltip v-if="item._dStatus === undefined" bottom>
@@ -213,15 +230,14 @@ export default {
           align: 'left',
           value: 'name'
         },
-        { text: 'Horário', value: '_dWeekday' },
-        // SEPARAR em dia da semana | Horário |
+        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
+        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
+        { text: 'Dia da Semana', value: '_dWeekday' },
+        { text: 'Horário', value: '_dFullTime' },
         { text: 'Turmas', value: '_dTurmas' },
-        // adicionar MIN para turma
-        // adicionar MAX para turma
+        { text: 'Min', value: 'minimum' },
+        { text: 'Máx', value: 'maximum' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
-        // TROCAS Custo extra por atividades eletivas
-        // COLOCAR Atividades complementares para aquelas que são 'gratuitas'
-        { text: 'Custo Extra', value: 'tags' },
         { text: 'Ações', value: 'action', sortable: false }
       ]
     }
@@ -267,7 +283,7 @@ export default {
           m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
           m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
           m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-          m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]},${m._dStartTime[i]} as ${m._dEndTime[i]}`)
+          m._dFullTime = m.weekday.map((_, i) => `${m._dStartTime[i]} as ${m._dEndTime[i]}`)
           // NOME ATIVIDADE | ATIVIDADE COMPLEMENTAR | ATIVIDADE ELETIVA | DIA DA SEMANA | HORÁRIO | MIN | MAX | VAGAS DISPONÍVEIS | AÇÕES.
 
           m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])

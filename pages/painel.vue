@@ -9,30 +9,46 @@
 
           <v-tab-item v-for="(tabItem, index) in tabItems" :key="index">
             <v-card class="elevation-0">
-              <v-card-title v-if="tabItem.status === 'pending'">
-                <!-- <v-tooltip bottom>
+              <v-card-title>
+                <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn
                       v-on="on"
-                      @click="confirmBookings"
-                      :disabled="overview.pending.length === 0"
+                      @click="sendEmails"
+                      :disabled="mappedBookings.length === 0"
                       tile
                       depressed
                       color="green lighten-5 green--text"
                     >
-                      Enviar Emails ({{ overview.pending.length }})
+                      Exportar para Excel
                     </v-btn>
                   </template>
                   <span>
-                    <div v-for="(booking, j) in overview.pending" :key="j">
-                      <span class="grey--text text--lighten-2">
-                        ({{ (materias.find((m) => m._id === booking.materia) || {}).core }})
-                      </span>
+                    Baixar
+                  </span>
+                </v-tooltip>
+                <v-spacer></v-spacer>
 
-                      {{ (materias.find((m) => m._id === booking.materia) || {}).name }}
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-on="on"
+                      @click="exportCSV"
+                      :disabled="mappedBookings.length === 0"
+                      tile
+                      depressed
+                      color="blue lighten-5 blue--text"
+                    >
+                      Enviar Emails ({{ mappedBookings.length }})
+                    </v-btn>
+                  </template>
+                  <span>
+                    <div v-for="(booking, j) in mappedBookings" :key="j">
+                      {{ booking.name }}
+                      <span class="grey--text text--lighten-1">({{ booking.bookings.length }})</span>
                     </div>
                   </span>
-                </v-tooltip> -->
+                </v-tooltip>
               </v-card-title>
               <v-data-table
                 :headers="tabItem.headers"
@@ -44,20 +60,28 @@
                   <tr
                     :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
                   >
-                    <td class="text-left">{{ item.name_student }}</td>
+                    <td class="text-left">{{ item.name }}</td>
                     <td class="text-start py-4">
-                      {{ item.core }}
+                      <div v-for="(booking, j) in item.bookings" :key="j" class="pb-1">
+                        {{ booking.core }}
+                      </div>
                     </td>
                     <td class="text-start">
-                      {{ item.name_materia }}
+                      <div v-for="(booking, j) in item.bookings" :key="j" class="pb-1">
+                        {{ booking.name_materia }}
+                      </div>
                     </td>
                     <td class="text-start">
-                      <div v-html="item._dPosition"></div>
+                      <div v-for="(booking, j) in item._dPosition" :key="j" class="pb-1">
+                        <span v-html="booking"></span>
+                      </div>
                     </td>
                     <td class="text-start">
-                      {{ item._dSubscriptionTime }}
-                      <div class="grey--text caption">
-                        {{ item._dSubscriptionTimeCalendar }}
+                      <div v-for="(booking, j) in item._dPosition" :key="j" class="pb-1">
+                        {{ item._dSubscriptionTime[j] }}
+                        <span class="ml-2 grey--text caption">
+                          {{ item._dSubscriptionTimeCalendar[j] }}
+                        </span>
                       </div>
                     </td>
                     <td class="text-start">
@@ -139,8 +163,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('booking', {
-      bookings: 'all'
+    ...mapGetters('booking', {
+      bookings: 'users'
     }),
     ...mapGetters('booking', ['overview']),
     ...mapState('materias', {
@@ -150,18 +174,24 @@ export default {
       return this.selected.map((booking) => this.materias.find((m) => m._id === booking.materia))
     },
     mappedBookings() {
-      return _.cloneDeep(this.bookings).map((m) => {
-        m._dPosition = `<b class="${m.position > m.maximum ? 'red' : 'green'}--text mr-1">${m.position}</b> de ${m.maximum}</div>`
-        m._dSubscriptionTime = this.$moment
-          .utc(m.timestamp)
-          .tz('America/Sao_Paulo')
-          .format('LT')
-        m._dSubscriptionTimeCalendar = this.$moment
-          .utc(m.timestamp)
-          .tz('America/Sao_Paulo')
-          .fromNow()
+      return _.cloneDeep(this.bookings).map((b) => {
+        b._dPosition = b.bookings.map(
+          (m) => `<b class="${m.position > m.maximum ? 'red' : 'green'}--text mr-1">${m.position}</b> de ${m.maximum}</div>`
+        )
+        b._dSubscriptionTime = b.bookings.map((m) =>
+          this.$moment
+            .utc(m.timestamp)
+            .tz('America/Sao_Paulo')
+            .format('LT')
+        )
+        b._dSubscriptionTimeCalendar = b.bookings.map((m) =>
+          this.$moment
+            .utc(m.timestamp)
+            .tz('America/Sao_Paulo')
+            .fromNow()
+        )
 
-        return m
+        return b
       })
     },
     tabItems() {
@@ -196,6 +226,14 @@ export default {
     },
     sendEmail() {
       console.log('SEND EMAIL')
+    },
+    sendEmails() {
+      console.log('SEND ALL EMAILS')
+    },
+    async exportCSV() {
+      const res = await this.$axios.$get(`booking/export`)
+
+      // TODO: Export to CSV
     }
   }
 }

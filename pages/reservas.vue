@@ -46,25 +46,44 @@
                     :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
                   >
                     <td class="text-left">{{ item.name }}</td>
-                    <td class="text-start py-4">
-                      <div v-for="(time, j) in item._dFullTime" :key="j">
-                        {{ time }}
-                      </div>
+                    <td class="text-center">
+                      <v-btn v-on="on" v-if="!item.tags.includes('custo extra')" icon>
+                        <v-icon color="blue">mdi-school</v-icon>
+                      </v-btn>
                     </td>
-                    <td class="text-start">
-                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
-                        {{ turma }}
-                      </v-chip>
+                    <td class="text-center">
+                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" icon>
+                            <v-icon color="red">mdi-currency-usd</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>R$ 180,00</span>
+                      </v-tooltip>
                     </td>
                     <template v-if="tabItem.status === 'confirmed'">
                       <td class="text-start">
                         <div v-html="item._dStackPosition"></div>
                       </td>
                     </template>
-                    <td v-else-if="tabItem.status === 'pending'" class="text-start">
-                      <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
-                      <v-icon v-else>mdi-infinity</v-icon>
+                    <template v-else-if="tabItem.status === 'pending'">
+                      <td class="text-start py-4">
+                        <div v-for="(time, j) in item._dFullTime" :key="j">
+                          {{ time }}
+                        </div>
+                      </td>
+                    </template>
+                    <td class="text-start">
+                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
+                        {{ turma }}
+                      </v-chip>
                     </td>
+                    <template v-if="tabItem.status === 'pending'">
+                      <td class="text-start">
+                        <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
+                        <v-icon v-else>mdi-infinity</v-icon>
+                      </td>
+                    </template>
                     <td class="text-start">
                       <v-tooltip v-if="item._dStatus === 'confirmed'" bottom>
                         <template v-slot:activator="{ on }">
@@ -95,16 +114,6 @@
                           </v-btn>
                         </template>
                         <span>Remover</span>
-                      </v-tooltip>
-                    </td>
-                    <td class="text-start">
-                      <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
-                        <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" icon>
-                            <v-icon color="red">mdi-currency-usd</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Atividade com Custo Extra</span>
                       </v-tooltip>
                     </td>
                   </tr>
@@ -167,11 +176,12 @@ export default {
           align: 'left',
           value: 'name'
         },
+        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
+        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
         { text: 'Horário', value: '_dWeekday' },
         { text: 'Turmas', value: '_dTurmas' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
-        { text: 'Ações', value: 'action', sortable: false },
-        { text: 'Custo Extra', value: 'tags' }
+        { text: 'Ações', value: 'action', sortable: false }
       ],
       headersConfirmed: [
         {
@@ -179,10 +189,11 @@ export default {
           align: 'left',
           value: 'name'
         },
+        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
+        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
         { text: 'Situação', value: '_dStackPosition' },
         { text: 'Turmas', value: '_dTurmas' },
-        { text: 'Ações', value: 'tags', sortable: false },
-        { text: 'Custo Extra', value: 'action' }
+        { text: 'Ações', value: 'tags', sortable: false }
       ]
     }
   },
@@ -202,7 +213,7 @@ export default {
         m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
         m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
         m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-        m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]}, ${m._dStartTime[i]} às ${m._dEndTime[i]}`)
+        m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]}, ${m._dStartTime[i]} as ${m._dEndTime[i]}`)
 
         m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])
 

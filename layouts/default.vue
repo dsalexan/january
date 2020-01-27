@@ -169,7 +169,7 @@
       </v-list>
     </v-navigation-drawer>
     <v-content>
-      <v-container class="fill-height">
+      <v-container class="fill-height" style="max-width: 100%">
         <nuxt />
       </v-container>
     </v-content>
