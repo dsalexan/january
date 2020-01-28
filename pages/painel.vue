@@ -208,8 +208,20 @@ export default {
       return this.$auth.$storage._state['_token.local']
     }
   },
+  mounted() {
+    this.initMaterias()
+    this.initBookings()
+    // TODO: Se certificar que ele vai atualizar a lista toda vez que entrar na pagina
+  },
   methods: {
+    ...mapActions('materias', {
+      initMaterias: 'init'
+    }),
+    ...mapActions('booking', {
+      initBookings: 'init'
+    }),
     ...mapActions('booking', ['select', 'deselect', 'confirm']),
+    ...mapActions(['mail']),
     updateItemsPerPage(newVal) {
       this.itemsPerPage = newVal
       setData('itemsPerPage', this.itemsPerPage)
@@ -228,11 +240,13 @@ export default {
     confirmBookings() {
       this.confirm()
     },
-    sendEmail() {
-      console.log(this.$auth)
+    async sendEmail(user) {
+      await this.mail({ users: user.student })
+      // TODO: Indicar que esta enviando os emails
+      // TODO: Indicar se houver algum erro
     },
-    sendEmails() {
-      console.log('SEND ALL EMAILS')
+    async sendEmails() {
+      await this.mail({ users: this.mappedBookings.map((b) => b.student) })
     }
   }
 }
