@@ -61,7 +61,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: process.env.BASE_URL
+    baseURL: process.env.BASE_URL || 'http://167.172.246.25:3001'
   },
   auth: {
     redirect: {
