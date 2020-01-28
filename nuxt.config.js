@@ -61,7 +61,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: 'http://127.0.0.1:3001'
+    baseURL: process.env.BASE_URL
   },
   auth: {
     redirect: {
