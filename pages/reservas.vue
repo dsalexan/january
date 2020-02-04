@@ -10,8 +10,8 @@
 
           <v-tab-item v-for="(tabItem, index) in tabItems" :key="index">
             <v-card class="elevation-0">
-              <v-card-title v-if="tabItem.status === 'pending'">
-                <v-tooltip bottom>
+              <v-card-title>
+                <v-tooltip v-if="tabItem.status === 'pending'" bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn
                       v-on="on"
@@ -31,6 +31,20 @@
                       </span>
 
                       {{ (materias.find((m) => m._id === booking.materia) || {}).name }}
+                    </div>
+                  </span>
+                </v-tooltip>
+                <v-tooltip v-else bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn v-on="on" tile depressed color="amber lighten-5 amber--text">
+                      <v-icon left>mdi-clock-outline</v-icon>
+                      Rematrícula em Andamento
+                    </v-btn>
+                  </template>
+                  <span style="text-align: center;">
+                    <div>No momento a rematrícula está em andamento.</div>
+                    <div>
+                      Aguarde, ao final do período, o recebimento de um e-mail de acompanhamento da secretaria.
                     </div>
                   </span>
                 </v-tooltip>
@@ -280,8 +294,14 @@ export default {
       this.deselect(item._id)
     },
     confirmBookings() {
-      this.$toast.success('Confirmando reservas...')
+      this.$toast.show('Confirmando reservas...')
       this.confirm()
+      this.$toast.success(
+        'Reserva confirmada! \n Aguarde, ao final do período, o recebimento de um e-mail de acompanhamento da secretaria.',
+        {
+          duration: 7000
+        }
+      )
     }
   }
 }

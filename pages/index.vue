@@ -338,8 +338,14 @@ export default {
       this.deselect(item._id)
     },
     confirmBookings() {
-      this.$toast.success('Confirmando reservas...')
+      this.$toast.show('Confirmando reservas...')
       this.confirm()
+      this.$toast.success(
+        'Reserva confirmada! \n Aguarde, ao final do período, o recebimento de um e-mail de acompanhamento da secretaria.',
+        {
+          duration: 7000
+        }
+      )
     },
     choqueHorario() {
       console.log(this.overview)

@@ -180,7 +180,8 @@ export const actions = {
     if (!res.success) return logError('Could not add to booking in API', res.error)
 
     // TODO: Add pushers to update smoothly
-    await dispatch('init', true)
+    dispatch('init', true)
+    dispatch('materias/init', true, { root: true })
     // state.list.splice(state.list.length, 0, res.data)
   },
   async confirm({ state, getters, dispatch }, id = null) {
@@ -197,7 +198,8 @@ export const actions = {
       if (!res.success) return logError(`Could not confirm booking <${_id}> in API`, res.error)
       else {
         // TODO: Add pushers to update smoothly
-        await dispatch('init', true)
+        dispatch('init', true)
+        dispatch('materias/init', true, { root: true })
         // state.list.find((booking) => booking.materia === _id).status = 1
       }
     }
@@ -212,7 +214,8 @@ export const actions = {
     if (!res.success) return logError('Could not add to booking in API', res.error)
 
     // TODO: Add pushers to update smoothly
-    await dispatch('init', true)
+    dispatch('init', true)
+    dispatch('materias/init', true, { root: true })
     // state.list.splice(index, 1)
   }
 }
