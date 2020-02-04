@@ -110,7 +110,7 @@ export default {
       turmasSelect: LIST_TURMAS.map((t, i) => ({
         text: t,
         value: i
-      }))
+      })).filter((item) => item.value > 4) // filtrando as turmas do /util
     }
   },
   computed: {
@@ -134,7 +134,8 @@ export default {
 
         await this.$axios.put(`me`, {
           email: this.email,
-          name: this.name
+          name: this.name,
+          turma: this.turma
         })
 
         this.$toast.success('Dados alterados com Sucesso')

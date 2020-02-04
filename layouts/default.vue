@@ -180,47 +180,88 @@
     </v-footer>
 
     <v-bottom-sheet v-model="bottomSheet" inset>
-      <v-sheet class="text-center" height="300px">
-        <v-stepper v-model="e6" vertical editable>
-          <!-- 1 -->
-          <v-stepper-step :complete="e6 > 1" step="1">
-            Bem Vindo!
-          </v-stepper-step>
+      <v-sheet class="text-center" height="600px">
+        <v-stepper v-model="e6" editable>
+          <v-stepper-header class="elevation-0 grey lighten-4">
+            <v-stepper-step :complete="e6 > 1" step="1">
+              Bem Vindo!
+            </v-stepper-step>
 
-          <v-stepper-content step="1">
-            <v-card color="grey lighten-1" class="mb-12" height="200px">
-              <p>Olá</p>
-              <p>
-                Esse tutorial irá te apresentar como realizar a matrícula nas atividades extracurriculares do estudante de uma
-                forma simples e prática!
-              </p>
-            </v-card>
-            <v-btn @click="e6 = 2" color="primary">Continuar</v-btn>
-            <v-btn @click="e6--" color="grey">Voltar</v-btn>
-          </v-stepper-content>
+            <v-divider></v-divider>
+            <v-stepper-step :complete="e6 > 2" step="2">Início</v-stepper-step>
 
-          <v-stepper-step :complete="e6 > 2" step="2">Configure analytics for this app</v-stepper-step>
+            <v-divider></v-divider>
+            <v-stepper-step :complete="e6 > 3" step="3">Select an ad format and name ad unit</v-stepper-step>
 
-          <v-stepper-content step="2">
-            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
-            <v-btn @click="e6 = 3" color="primary">Continue</v-btn>
-            <v-btn text>Cancel</v-btn>
-          </v-stepper-content>
+            <v-divider></v-divider>
+            <v-stepper-step step="4">View setup instructions</v-stepper-step>
+          </v-stepper-header>
 
-          <v-stepper-step :complete="e6 > 3" step="3">Select an ad format and name ad unit</v-stepper-step>
-
-          <v-stepper-content step="3">
-            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
-            <v-btn @click="e6 = 4" color="primary">Continue</v-btn>
-            <v-btn text>Cancel</v-btn>
-          </v-stepper-content>
-
-          <v-stepper-step step="4">View setup instructions</v-stepper-step>
-          <v-stepper-content step="4">
-            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
-            <v-btn @click="e6 = 1" color="primary">Continue</v-btn>
-            <v-btn text>Cancel</v-btn>
-          </v-stepper-content>
+          <v-card class="elevation-0">
+            <v-card-text class="elevation-0">
+              <v-stepper-items>
+                <v-stepper-content step="1">
+                  <p class="display-1">Olá.</p>
+                  <p>
+                    Esse tutorial irá te apresentar como realizar a matrícula nas atividades extracurriculares do estudante de uma
+                    forma simples e prática!
+                  </p>
+                </v-stepper-content>
+                <v-stepper-content step="2">
+                  <p>
+                    É necessário buscar a atividade desejada dentro do respectivo Núcleo, por exemplo:
+                  </p>
+                  <p>Desenho está no Núcleo Planck Artes, Programação está no Núcleo Planck Tecnologia...</p>
+                  <p>Um pouco de bom senso é sempre válido nesse momento!</p>
+                </v-stepper-content>
+                <v-stepper-content step="3">
+                  <p>
+                    Para iniciar a seleção das atividades vamos fazer um exemplo de matrícula:
+                  </p>
+                  <p>
+                    Quero cursar a atividade de Física do P3O, por onde começo?
+                  </p>
+                  <ul>
+                    <li>1- Clique no ícone do painel na aba lateral esquerda</li>
+                    <li>2- Selecione o Núcleo Planck de Preparação Olímpica</li>
+                    <li>3- Nessa aba busque pela atividade desejada</li>
+                    <li>
+                      <p>4- Ao selecionar verá que um “check” em azul aparecerá na matéria!</p>
+                      <ul>
+                        <li>a. É necessária a confirmação na matéria para que a inscrição seja realizada.</li>
+                        <li>
+                          b. Caso o período de matricula seja encerrado as matérias não confirmadas(“check” azul) não serão
+                          consideradas.
+                        </li>
+                        <li>c. ATENÇÃO PARA OS PRAZOS!</li>
+                      </ul>
+                    </li>
+                    <li>
+                      <p>5- Confirme a reserva na atividade para se inscrever.</p>
+                      <ul>
+                        <li>
+                          a. Caso o número de pessoas inscritas exceda a quantidade de vagas o estudante entrará na fila de espera
+                          ao confirmar sua reserva.
+                        </li>
+                        <li>
+                          b. A ordem de preenchimento de vagas para as atividades é feita por ordem de chegada e caso alguém
+                          desista e/ou cancele a matrícula as posições de espera são atualizadas.
+                        </li>
+                      </ul>
+                    </li>
+                    <li>6- Aguarde o final do período de matrícula para receber um e-mail de confirmação!</li>
+                  </ul>
+                </v-stepper-content>
+              </v-stepper-items>
+            </v-card-text>
+            <v-card-actions class="elevation-0">
+              <v-btn @click="e6--" depressed icon color="grey lighten-1"> <v-icon>mdi-arrow-left</v-icon></v-btn>
+              <v-spacer></v-spacer>
+              <v-btn @click="e6++" depressed icon color="primary">
+                <v-icon>mdi-arrow-right</v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
         </v-stepper>
       </v-sheet>
     </v-bottom-sheet>

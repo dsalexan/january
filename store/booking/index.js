@@ -96,7 +96,7 @@ export const getters = {
           student: booking.student,
           turma: booking.turma,
           bookings: [],
-          emails: state.emails.find((entry) => entry.student === booking.student)
+          emails: state.emails.filter((entry) => entry.student === booking.student)
         }
       }
 
@@ -127,7 +127,7 @@ export const actions = {
         logError('Error on fetching emails sent from API', '/users/mail', res.error)
       } else {
         state.emails = res.data
-        log(`Initialized global emails store with ${state.list.length} entries`, state.all)
+        log(`Initialized global emails store with ${state.emails.length} entries`, state.emails)
       }
     }
   },
@@ -158,7 +158,7 @@ export const actions = {
         logError('Error on fetching bookings from API', '/booking', res.error)
       } else {
         state.all = res.data
-        log(`Initialized global booking store with ${state.list.length} entries`, state.all)
+        log(`Initialized global booking store with ${state.all.length} entries`, state.all)
       }
     }
   },

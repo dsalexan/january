@@ -166,7 +166,7 @@ export default {
     return {
       dialog: false,
       dialogData: undefined,
-      tab: undefined,
+      tab: 0,
       search: undefined,
       headersPending: [
         {
@@ -253,6 +253,11 @@ export default {
           headers: this.headersConfirmed
         }
       ]
+    }
+  },
+  mounted() {
+    if (this.tab !== 1 && this.overview.pending.length === 0) {
+      this.tab = 1
     }
   },
   methods: {

@@ -1,7 +1,9 @@
 Alpha:
   ☐ Apos cada evento re atualizar dados na tela
+    ☐ Reservas (posicao na fila e vagas)
+    ✔ Painel (novas reservas) @done(20-02-04 19:14)
   ✔ Toast de confirmacao/erro apos enviar email @started(20-02-02 10:59) @done(20-02-02 11:06) @lasted(7m49s)
-  ☐ Criar tabela de email e exibir quantos emails e se foram enviados para cada aluno @started(20-02-02 12:10)
+  ✔ Criar tabela de email e exibir quantos emails e se foram enviados para cada aluno @done(20-02-04 18:17)
   ✔ Choque de Matéria, só mostrar as conflitantes no icone individual @started(20-02-02 11:24) @done(20-02-02 11:29) @lasted(5m4s)
   ✔ Icone na tela inicial @done(20-02-02 11:43)
   ☐ Background da home
@@ -18,6 +20,9 @@ Alpha:
     ✔ Colocar todas as colunas no email @done(20-02-04 15:50)
   Perfil:
     ✘ Tirar a opcao de alterar turma @cancelled(20-02-02 12:00)
+    ✔ A turma nao ta alterando @done(20-02-04 18:37)
+  Reservas: 
+    ✔ mostrar por padrao a confirmadas quando nao houver pendente @done(20-02-04 18:41)
   ☐ Analisar a ideia de varios periodos
   ☐ Recuperar senha
   ☐ Criar tutorial

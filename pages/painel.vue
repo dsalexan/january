@@ -89,11 +89,10 @@
                           </v-btn>
                         </template>
                         <span>
-                          {{ item._dEmails.length > 0 ? 'Re-enviar' : 'Enviar' }} Email
-                          <div>
-                            <span v-for="(email, j) in item._dEmails" :key="j" class="grey--text text--lighten-1">{{
-                              email
-                            }}</span>
+                          {{ item._dEmails.length > 0 ? 'Re-Enviar' : 'Enviar' }} Email
+                          <div v-if="item._dEmails.length > 0" class="mt-2">
+                            <div class="font-italic grey--text text--lighten-2 caption">Últimos envios:</div>
+                            <div v-for="(email, j) in item._dEmails" :key="j" class="grey--text text--lighten-1">{{ email }}</div>
                           </div>
                         </span>
                       </v-tooltip>
@@ -202,7 +201,7 @@ export default {
           this.$moment
             .utc(e.timestamp)
             .tz('America/Sao_Paulo')
-            .format('LT')
+            .format('DD/MM HH:mm')
         )
 
         return b
@@ -223,8 +222,8 @@ export default {
   },
   mounted() {
     this.$toast.show('Carregando...')
-    this.initMaterias()
-    this.initBookings()
+    this.initMaterias(true)
+    this.initBookings(true)
     // TODO: Se certificar que ele vai atualizar a lista toda vez que entrar na pagina
   },
   methods: {
