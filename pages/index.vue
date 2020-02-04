@@ -1,7 +1,7 @@
 <template>
   <v-layout class="page-index pa-10" column justify-center align-center>
     <v-flex class="d-flex  flex-column justify-center align-center" style="width: 100%;">
-      <h2 class="display-2 has-text-centered mb-8 font-weight-bold">Matrícula nas atividades extracurriculares</h2>
+      <h2 class="display-2 has-text-centered mb-8 font-weight-bold">Matrícula nas Atividades Extracurriculares</h2>
       <!-- <div class="has-text-centered mb-1">Primeiro, escolha um núcleo de matérias.</div> -->
       <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 100%; flex-grow: 1;">
         <v-tabs v-model="tab" centered class="d-flex flex-column" style="height: 100%;">
@@ -42,6 +42,7 @@
                     <v-btn
                       v-on="on"
                       v-show="overview.blocking.length > 0"
+                      @click="choqueHorario"
                       class="ml-2"
                       tile
                       depressed
@@ -55,21 +56,15 @@
                     <b>Você possui atividades em conflito de horário:</b>
                     <div v-for="(booking, j) in overview.blocking" :key="j">
                       <span class="grey--text text--lighten-2">
-                        ({{ (materias.find((m) => m._id === booking.materia) || {}).core }})
+                        ({{ (materias.find((m) => m._id === booking.booking.materia) || {}).core }})
                       </span>
 
-                      {{ (materias.find((m) => m._id === booking.materia) || {}).name }}
+                      {{ (materias.find((m) => m._id === booking.booking.materia) || {}).name }}
                     </div>
                   </span>
                 </v-tooltip>
               </v-card-title>
-              <v-data-table
-                :headers="headers"
-                :items="core.searchableMaterias"
-                :items-per-page="itemsPerPage"
-                :search="search"
-                @update:items-per-page="updateItemsPerPage"
-              >
+              <v-data-table :headers="headers" :items="core.searchableMaterias" :search="search" :items-per-page="-1">
                 <template v-slot:item="{ item }">
                   <tr
                     :class="{
@@ -81,18 +76,24 @@
                   >
                     <td class="text-left">{{ item.name }}</td>
                     <td class="text-center">
-                      <v-btn v-on="on" v-if="!item.tags.includes('custo extra')" icon>
-                        <v-icon color="blue">mdi-school</v-icon>
-                      </v-btn>
-                    </td>
-                    <td class="text-center">
                       <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
                         <template v-slot:activator="{ on }">
                           <v-btn v-on="on" icon>
                             <v-icon color="red">mdi-currency-usd</v-icon>
                           </v-btn>
                         </template>
-                        <span>R$ 180,00</span>
+                        <span>
+                          Atividade Eletiva
+                          <div class="grey--text text--lighten-2 font-italic">R$ 180,00</div>
+                        </span>
+                      </v-tooltip>
+                      <v-tooltip v-else bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" icon>
+                            <v-icon color="blue">mdi-school</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Atividade Complementar</span>
                       </v-tooltip>
                     </td>
                     <td class="text-start py-4">
@@ -106,9 +107,7 @@
                       </div>
                     </td>
                     <td class="text-start">
-                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
-                        {{ turma }}
-                      </v-chip>
+                      <v-chip class="ma-1" x-small> {{ item.credit }} hora{{ item.credit > 1 ? 's' : '' }} </v-chip>
                     </td>
                     <td class="text-start">
                       {{ item.minimum === 0 ? '' : item.minimum }}
@@ -160,7 +159,15 @@
                         </template>
                         <span>
                           <b>Conflito de Horário</b>
-                          <div v-for="(booking, j) in overview.blocking.filter((b) => b.materia !== item._id)" :key="j">
+                          <div
+                            v-for="(booking, j) in overview.blocking
+                              .map((b) => {
+                                if (b.booking.materia !== item._id) return []
+                                else return b.blockedBy
+                              })
+                              .flat(1)"
+                            :key="j"
+                          >
                             <span class="grey--text text--lighten-2">
                               ({{ (materias.find((m) => m._id === booking.materia) || {}).core }})
                             </span>
@@ -223,18 +230,16 @@ export default {
       dialogData: undefined,
       tab: undefined,
       search: undefined,
-      itemsPerPage: getData('itemsPerPage') || 5,
       headers: [
         {
           text: 'Atividade',
           align: 'left',
           value: 'name'
         },
-        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
-        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
+        { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
         { text: 'Dia da Semana', value: '_dWeekday' },
         { text: 'Horário', value: '_dFullTime' },
-        { text: 'Turmas', value: '_dTurmas' },
+        { text: 'Carga Horária', value: 'credit' },
         { text: 'Min', value: 'minimum' },
         { text: 'Máx', value: 'maximum' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
@@ -302,7 +307,7 @@ export default {
           m._dStatus = undefined
           const booked = this.selected.find((booking) => booking.materia === m._id)
           if (booked) {
-            if (this.overview.blocking.find((b) => b.materia === m._id)) m._dStatus = 'blocking'
+            if (this.overview.blocking.find((b) => b.booking.materia === m._id)) m._dStatus = 'blocking'
             else m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
           }
 
@@ -320,6 +325,7 @@ export default {
       setData('itemsPerPage', this.itemsPerPage)
     },
     selectItem(item) {
+      this.$toast.show(`Selecionando "${item.name}"...`)
       this.select(item._id)
     },
     confirmedDeselectItem(item) {
@@ -327,11 +333,16 @@ export default {
       this.dialogData = item
     },
     deselectItem(item) {
+      this.$toast.show(`Cancelando reserva "${item.name}"...`)
       this.dialog = false
       this.deselect(item._id)
     },
     confirmBookings() {
+      this.$toast.success('Confirmando reservas...')
       this.confirm()
+    },
+    choqueHorario() {
+      console.log(this.overview)
     }
   }
 }

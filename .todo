@@ -1,0 +1,24 @@
+Alpha:
+  ☐ Apos cada evento re atualizar dados na tela
+  ✔ Toast de confirmacao/erro apos enviar email @started(20-02-02 10:59) @done(20-02-02 11:06) @lasted(7m49s)
+  ☐ Criar tabela de email e exibir quantos emails e se foram enviados para cada aluno @started(20-02-02 12:10)
+  ✔ Choque de Matéria, só mostrar as conflitantes no icone individual @started(20-02-02 11:24) @done(20-02-02 11:29) @lasted(5m4s)
+  ✔ Icone na tela inicial @done(20-02-02 11:43)
+  ☐ Background da home
+  ✔ Title do site @done(20-02-02 11:43)
+  Cadastro:
+    ✔ Email do responsavel @done(20-02-02 11:06)
+  Home:
+    ✔ Letra maiuscula Atividades Extracurriculares @done(20-02-02 12:08)
+    ✔ Não mostrar turmas pros Alunos @done(20-02-02 11:14)
+    ✔ Remover rows per page @done(20-02-02 11:14)
+    ✔ Juntar complementar e eletiva @done(20-02-02 11:14)
+    ✔ Colocar no lugar de turma carga horária semanal @done(20-02-02 11:14)
+  Painel:
+    ✔ Colocar todas as colunas no email @done(20-02-04 15:50)
+  Perfil:
+    ✘ Tirar a opcao de alterar turma @cancelled(20-02-02 12:00)
+  ☐ Analisar a ideia de varios periodos
+  ☐ Recuperar senha
+  ☐ Criar tutorial
+  ✔ Footer @done(20-02-02 12:03)

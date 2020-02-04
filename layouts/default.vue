@@ -175,9 +175,55 @@
     </v-content>
     <v-footer app>
       <div class="d-flex justify-center" style="width: 100%">
-        <span class="caption">2020 &mdash; <b>January Project</b></span>
+        <span class="caption">2020 &mdash; <b>Colégio Planck</b></span>
       </div>
     </v-footer>
+
+    <v-bottom-sheet v-model="bottomSheet" inset>
+      <v-sheet class="text-center" height="300px">
+        <v-stepper v-model="e6" vertical editable>
+          <!-- 1 -->
+          <v-stepper-step :complete="e6 > 1" step="1">
+            Bem Vindo!
+          </v-stepper-step>
+
+          <v-stepper-content step="1">
+            <v-card color="grey lighten-1" class="mb-12" height="200px">
+              <p>Olá</p>
+              <p>
+                Esse tutorial irá te apresentar como realizar a matrícula nas atividades extracurriculares do estudante de uma
+                forma simples e prática!
+              </p>
+            </v-card>
+            <v-btn @click="e6 = 2" color="primary">Continuar</v-btn>
+            <v-btn @click="e6--" color="grey">Voltar</v-btn>
+          </v-stepper-content>
+
+          <v-stepper-step :complete="e6 > 2" step="2">Configure analytics for this app</v-stepper-step>
+
+          <v-stepper-content step="2">
+            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
+            <v-btn @click="e6 = 3" color="primary">Continue</v-btn>
+            <v-btn text>Cancel</v-btn>
+          </v-stepper-content>
+
+          <v-stepper-step :complete="e6 > 3" step="3">Select an ad format and name ad unit</v-stepper-step>
+
+          <v-stepper-content step="3">
+            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
+            <v-btn @click="e6 = 4" color="primary">Continue</v-btn>
+            <v-btn text>Cancel</v-btn>
+          </v-stepper-content>
+
+          <v-stepper-step step="4">View setup instructions</v-stepper-step>
+          <v-stepper-content step="4">
+            <v-card color="grey lighten-1" class="mb-12" height="200px"></v-card>
+            <v-btn @click="e6 = 1" color="primary">Continue</v-btn>
+            <v-btn text>Cancel</v-btn>
+          </v-stepper-content>
+        </v-stepper>
+      </v-sheet>
+    </v-bottom-sheet>
   </v-app>
 </template>
 
@@ -191,7 +237,9 @@ export default {
   data() {
     return {
       drawer: true,
-      miniVariant: getData('collapsedMenu') || false
+      miniVariant: getData('collapsedMenu') || false,
+      bottomSheet: true,
+      e6: 1
     }
   },
   computed: {

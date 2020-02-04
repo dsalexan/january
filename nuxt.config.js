@@ -6,8 +6,8 @@ export default {
    ** Headers of the page
    */
   head: {
-    titleTemplate: '%s - ' + process.env.npm_package_name,
-    title: process.env.npm_package_name || '',
+    titleTemplate: 'Extracurriculares - Colégio Planck',
+    title: 'Extracurriculares',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -15,9 +15,25 @@ export default {
         hid: 'description',
         name: 'description',
         content: process.env.npm_package_description || ''
+      },
+      {
+        name: 'msapplication-TileColor',
+        content: '#da532c'
+      },
+      {
+        name: 'theme-color',
+        content: '#ffffff'
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' },
+      { rel: 'icon', sizes: '32x32', href: '/favicon-32x32.png' },
+      { rel: 'icon', sizes: '16x16', href: '/favicon-16x16.png' },
+      { rel: 'mask-icon', href: '/safari-pinned-tab.svg', color: '#5bbad5' },
+      { rel: 'apple-touch-icon', type: 'image/x-icon', sizes: '180x180', href: '/apple-touch-icon.png' }
+    ]
+    /* <link rel="manifest" href="/site.webmanifest"> */
   },
   /*
    ** Customize the progress-bar color
@@ -61,7 +77,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: process.env.BASE_URL || 'http://167.172.246.25:3001'
+    baseURL: process.env.BASE_URL || 'http://localhost:3001' || 'http://167.172.246.25:3001'
   },
   auth: {
     redirect: {

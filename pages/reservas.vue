@@ -35,22 +35,12 @@
                   </span>
                 </v-tooltip>
               </v-card-title>
-              <v-data-table
-                :headers="tabItem.headers"
-                :items="tabItem.items"
-                :items-per-page="itemsPerPage"
-                @update:items-per-page="updateItemsPerPage"
-              >
+              <v-data-table :headers="tabItem.headers" :items="tabItem.items" :items-per-page="-1">
                 <template v-slot:item="{ item }">
                   <tr
                     :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
                   >
                     <td class="text-left">{{ item.name }}</td>
-                    <td class="text-center">
-                      <v-btn v-on="on" v-if="!item.tags.includes('custo extra')" icon>
-                        <v-icon color="blue">mdi-school</v-icon>
-                      </v-btn>
-                    </td>
                     <td class="text-center">
                       <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
                         <template v-slot:activator="{ on }">
@@ -58,7 +48,18 @@
                             <v-icon color="red">mdi-currency-usd</v-icon>
                           </v-btn>
                         </template>
-                        <span>R$ 180,00</span>
+                        <span>
+                          Atividade Eletiva
+                          <div class="grey--text text--lighten-2 font-italic">R$ 180,00</div>
+                        </span>
+                      </v-tooltip>
+                      <v-tooltip v-else bottom>
+                        <template v-slot:activator="{ on }">
+                          <v-btn v-on="on" icon>
+                            <v-icon color="blue">mdi-school</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Atividade Complementar</span>
                       </v-tooltip>
                     </td>
                     <template v-if="tabItem.status === 'confirmed'">
@@ -74,9 +75,7 @@
                       </td>
                     </template>
                     <td class="text-start">
-                      <v-chip v-for="(turma, j) in item._dTurmas" :key="j" class="ma-1" x-small>
-                        {{ turma }}
-                      </v-chip>
+                      <v-chip class="ma-1" x-small> {{ item.credit }} hora{{ item.credit > 1 ? 's' : '' }} </v-chip>
                     </td>
                     <template v-if="tabItem.status === 'pending'">
                       <td class="text-start">
@@ -169,17 +168,15 @@ export default {
       dialogData: undefined,
       tab: undefined,
       search: undefined,
-      itemsPerPage: getData('itemsPerPage') || 5,
       headersPending: [
         {
           text: 'Atividade',
           align: 'left',
           value: 'name'
         },
-        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
-        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
+        { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
         { text: 'Horário', value: '_dWeekday' },
-        { text: 'Turmas', value: '_dTurmas' },
+        { text: 'Carga Horária', value: 'credit' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
         { text: 'Ações', value: 'action', sortable: false }
       ],
@@ -189,10 +186,9 @@ export default {
           align: 'left',
           value: 'name'
         },
-        { text: 'Atv. Complementar', align: 'center', value: '_dComplementar' },
-        { text: 'Atv. Eletiva', align: 'center', value: '_dEletiva' },
+        { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
         { text: 'Situação', value: '_dStackPosition' },
-        { text: 'Turmas', value: '_dTurmas' },
+        { text: 'Carga Horária', value: 'credit' },
         { text: 'Ações', value: 'tags', sortable: false }
       ]
     }
@@ -233,7 +229,7 @@ export default {
         m._dStackPosition = null
         const booked = this.selected.find((booking) => booking.materia === m._id)
         if (booked) {
-          if (this.overview.blocking.find((b) => b.materia === m._id)) m._dStatus = 'blocking'
+          if (this.overview.blocking.find((b) => b.booking.materia === m._id)) m._dStatus = 'blocking'
           else m._dStatus = booked.status === 0 ? 'pending' : 'confirmed'
           m._dStackPosition =
             booked.position <= m.maximum
@@ -266,6 +262,7 @@ export default {
       setData('itemsPerPage', this.itemsPerPage)
     },
     selectItem(item) {
+      this.$toast.show(`Selecionando "${item.name}"...`)
       this.select(item._id)
     },
     confirmedDeselectItem(item) {
@@ -273,10 +270,12 @@ export default {
       this.dialogData = item
     },
     deselectItem(item) {
+      this.$toast.show(`Cancelando reserva "${item.name}"...`)
       this.dialog = false
       this.deselect(item._id)
     },
     confirmBookings() {
+      this.$toast.success('Confirmando reservas...')
       this.confirm()
     }
   }

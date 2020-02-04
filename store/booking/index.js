@@ -13,7 +13,8 @@ const logError = error.extend('booking')
 export const state = () => ({
   __inited: false,
   list: [],
-  all: []
+  all: [],
+  emails: []
 })
 
 export const getters = {
@@ -45,40 +46,43 @@ export const getters = {
     if (state.list.length === 0 || rootState.materias.list.length === 0) return o
 
     o.blocking = o.pending.map((b) => {
-      let blockedByConfirmed = false
-      let blockedByPending = false
-      // TODO: Add moment range and check if time overlaps, if it does, then is a blocking booking and can not be confirmed
+      let blockedByConfirmed = []
+      let blockedByPending = []
+
       // https://stackoverflow.com/questions/44800471/check-if-times-overlap-using-moment
       // against confirmed
-      const c = _.cloneDeep(o.confirmed)
+      blockedByConfirmed = _.cloneDeep(o.confirmed)
         .filter((cb) => cb.weekday.some((wd) => b.weekday.includes(wd)))
-        .map((cb) => [cb.starttime, cb.endtime])
-
-      if (c.length > 0) {
-        blockedByConfirmed = c.some((cb) => overlap([cb, [b.starttime, b.endtime]]))
-      }
+        .filter((cb) =>
+          overlap([
+            [cb.starttime, cb.endtime],
+            [b.starttime, b.endtime]
+          ])
+        )
 
       // against pending
-      if (!blockedByConfirmed) {
-        const p = _.cloneDeep(o.pending)
+      if (blockedByConfirmed.length === 0) {
+        blockedByPending = _.cloneDeep(o.pending)
           .filter((cb) => cb.materia !== b.materia && cb.weekday.some((wd) => b.weekday.includes(wd)))
-          .map((cb) => [cb.starttime, cb.endtime])
-
-        if (p.length > 0) {
-          blockedByPending = p.some((cb) => overlap([cb, [b.starttime, b.endtime]]))
-        }
+          .filter((cb) =>
+            overlap([
+              [cb.starttime, cb.endtime],
+              [b.starttime, b.endtime]
+            ])
+          )
       }
 
       return {
-        booking: b,
-        blockedByConfirmed,
-        blockedByPending,
-        blocked: blockedByConfirmed || blockedByPending
+        booking: {
+          booking: b,
+          blockedBy: [...blockedByConfirmed, ...blockedByPending]
+        },
+        blocked: blockedByConfirmed.length > 0 || blockedByPending.length > 0
       }
     })
     o.blocking = o.blocking.filter((b) => b.blocked).map((b) => b.booking)
 
-    o.pending = o.pending.filter((b) => o.blocking.find((bb) => bb.materia === b.materia) === undefined)
+    o.pending = o.pending.filter((b) => o.blocking.find((bb) => bb.booking.materia === b.materia) === undefined)
 
     return o
   },
@@ -90,7 +94,9 @@ export const getters = {
         _users[booking.student] = {
           name: booking.name_student,
           student: booking.student,
-          bookings: []
+          turma: booking.turma,
+          bookings: [],
+          emails: state.emails.find((entry) => entry.student === booking.student)
         }
       }
 
@@ -98,10 +104,33 @@ export const getters = {
     })
 
     return Object.values(_users)
+  },
+  unsentEmails(state, getters) {
+    return getters.users.filter((u) => u.emails.length === 0)
   }
 }
 
 export const actions = {
+  async allEmails({ state, rootState }, force = false) {
+    if (rootState.auth.loggedIn && rootState.auth.user._id === 'admin') {
+      let res
+      try {
+        res = await this.$axios.$get(`users/mail`)
+      } catch (e) {
+        res = {
+          success: false,
+          error: e
+        }
+      }
+
+      if (!res.success) {
+        logError('Error on fetching emails sent from API', '/users/mail', res.error)
+      } else {
+        state.emails = res.data
+        log(`Initialized global emails store with ${state.list.length} entries`, state.all)
+      }
+    }
+  },
   async userBookings({ state }, force = false) {
     const res = await this.$axios.$get(`me/booking`)
 
@@ -114,27 +143,29 @@ export const actions = {
     }
   },
   async allBookings({ state, rootState }, force = false) {
-    let res
-    try {
-      res = await this.$axios.$get(`booking`)
-    } catch (e) {
-      res = {
-        success: false,
-        error: e
+    if (rootState.auth.loggedIn && rootState.auth.user._id === 'admin') {
+      let res
+      try {
+        res = await this.$axios.$get(`booking`)
+      } catch (e) {
+        res = {
+          success: false,
+          error: e
+        }
       }
-    }
 
-    if (!res.success) {
-      logError('Error on fetching bookings from API', '/booking', res.error)
-    } else {
-      state.all = res.data
-      log(`Initialized global booking store with ${state.list.length} entries`, state.all)
+      if (!res.success) {
+        logError('Error on fetching bookings from API', '/booking', res.error)
+      } else {
+        state.all = res.data
+        log(`Initialized global booking store with ${state.list.length} entries`, state.all)
+      }
     }
   },
   async init({ state, dispatch }, force = false) {
     if (state.__inited && !force) return
 
-    await Promise.all([dispatch('userBookings'), dispatch('allBookings')])
+    await Promise.all([dispatch('userBookings', force), dispatch('allBookings', force), dispatch('allEmails', force)])
 
     state.__inited = true
   },

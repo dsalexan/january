@@ -11,7 +11,7 @@
           <v-text-field
             v-model="name"
             hide-details
-            label="Nome e sobrenome do aluno"
+            label="Nome e sobrenome do Estudante"
             type="text"
             autocomplete="Nome"
             name="name"
@@ -25,7 +25,7 @@
           <v-text-field
             v-model="email"
             hide-details
-            label="Seu melhor email"
+            label="Email do responsável"
             type="email"
             name="email"
             autocomplete="email"

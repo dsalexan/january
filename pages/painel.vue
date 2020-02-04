@@ -51,17 +51,13 @@
                   </span>
                 </v-tooltip>
               </v-card-title>
-              <v-data-table
-                :headers="tabItem.headers"
-                :items="tabItem.items"
-                :items-per-page="itemsPerPage"
-                @update:items-per-page="updateItemsPerPage"
-              >
+              <v-data-table :headers="tabItem.headers" :items="tabItem.items" :items-per-page="-1">
                 <template v-slot:item="{ item }">
                   <tr
                     :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
                   >
                     <td class="text-left">{{ item.name }}</td>
+                    <td class="text-start">{{ item._dTurma }}</td>
                     <td class="text-start py-4">
                       <div v-for="(booking, j) in item.bookings" :key="j" class="pb-1">
                         {{ booking.core }}
@@ -92,7 +88,14 @@
                             <v-icon color="blue">mdi-email-send-outline</v-icon>
                           </v-btn>
                         </template>
-                        <span>Enviar Email</span>
+                        <span>
+                          {{ item._dEmails.length > 0 ? 'Re-enviar' : 'Enviar' }} Email
+                          <div>
+                            <span v-for="(email, j) in item._dEmails" :key="j" class="grey--text text--lighten-1">{{
+                              email
+                            }}</span>
+                          </div>
+                        </span>
                       </v-tooltip>
                     </td>
                   </tr>
@@ -148,13 +151,13 @@ export default {
       dialogData: undefined,
       tab: undefined,
       search: undefined,
-      itemsPerPage: getData('itemsPerPage') || 5,
       headers: [
         {
           text: 'Estudante',
           align: 'left',
           value: 'student'
         },
+        { text: 'Turma', value: 'turma' },
         { text: 'Núcleo', value: 'core' },
         { text: 'Atividade', value: 'activity' },
         { text: 'Posição da Fila', value: '_dPosition' },
@@ -179,6 +182,9 @@ export default {
         b._dPosition = b.bookings.map(
           (m) => `<b class="${m.position > m.maximum ? 'red' : 'green'}--text mr-1">${m.position}</b> de ${m.maximum}</div>`
         )
+
+        b._dTurma = LIST_TURMAS[b.turma]
+
         b._dSubscriptionTime = b.bookings.map((m) =>
           this.$moment
             .utc(m.timestamp)
@@ -190,6 +196,13 @@ export default {
             .utc(m.timestamp)
             .tz('America/Sao_Paulo')
             .fromNow()
+        )
+
+        b._dEmails = b.emails.map((e) =>
+          this.$moment
+            .utc(e.timestamp)
+            .tz('America/Sao_Paulo')
+            .format('LT')
         )
 
         return b
@@ -209,6 +222,7 @@ export default {
     }
   },
   mounted() {
+    this.$toast.show('Carregando...')
     this.initMaterias()
     this.initBookings()
     // TODO: Se certificar que ele vai atualizar a lista toda vez que entrar na pagina
@@ -241,11 +255,13 @@ export default {
       this.confirm()
     },
     async sendEmail(user) {
+      this.$toast.show('Enviando email...')
       await this.mail({ users: user.student })
       // TODO: Indicar que esta enviando os emails
       // TODO: Indicar se houver algum erro
     },
     async sendEmails() {
+      this.$toast.show('Enviando emails...')
       await this.mail({ users: this.mappedBookings.map((b) => b.student) })
     }
   }
