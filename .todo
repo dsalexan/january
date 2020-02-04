@@ -1,6 +1,6 @@
 Alpha:
-  ☐ Apos cada evento re atualizar dados na tela
-    ☐ Reservas (posicao na fila e vagas)
+  ✔ Apos cada evento re atualizar dados na tela @done(20-02-04 20:07)
+    ✔ Reservas (posicao na fila e vagas) @done(20-02-04 20:07)
     ✔ Painel (novas reservas) @done(20-02-04 19:14)
   ✔ Toast de confirmacao/erro apos enviar email @started(20-02-02 10:59) @done(20-02-02 11:06) @lasted(7m49s)
   ✔ Criar tabela de email e exibir quantos emails e se foram enviados para cada aluno @done(20-02-04 18:17)
@@ -25,5 +25,5 @@ Alpha:
     ✔ mostrar por padrao a confirmadas quando nao houver pendente @done(20-02-04 18:41)
   ☐ Analisar a ideia de varios periodos
   ☐ Recuperar senha
-  ☐ Criar tutorial
+  ☐ Criar tutorial @started(20-02-04 20:07)
   ✔ Footer @done(20-02-02 12:03)
