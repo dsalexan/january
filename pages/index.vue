@@ -64,7 +64,13 @@
                   </span>
                 </v-tooltip>
               </v-card-title>
-              <v-data-table :headers="headers" :items="core.searchableMaterias" :search="search" :items-per-page="-1">
+              <v-data-table
+                :headers="headers"
+                :items="core.searchableMaterias"
+                :search="search"
+                :items-per-page="-1"
+                :custom-sort="customSort"
+              >
                 <template v-slot:item="{ item }">
                   <tr
                     :class="{
@@ -222,6 +228,24 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { LIST_TURMAS } from '~/utils/turmas'
 
+function _sort(_a, _b, { order = 'ASC', lowercase = false, uppercase = false } = {}) {
+  let a = _a
+  let b = _b
+
+  if (lowercase) {
+    a = typeof a === 'string' ? a.toLowerCase() : a
+    b = typeof b === 'string' ? b.toLowerCase() : b
+  }
+  if (uppercase) {
+    a = typeof a === 'string' ? a.toUpperCase() : a
+    b = typeof b === 'string' ? b.toUpperCase() : b
+  }
+
+  if (b === a) return 0
+  const c = b < a ? 1 : -1
+  return order === 'ASC' ? c : -1 * c
+}
+
 export default {
   middleware: 'auth',
   data() {
@@ -237,9 +261,9 @@ export default {
           value: 'name'
         },
         { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
-        { text: 'Dia da Semana', value: '_dWeekday' },
+        { text: 'Dia da Semana', value: 'weekday' },
         { text: 'Horário', value: '_dFullTime' },
-        { text: 'Carga Horária', value: 'credit' },
+        { text: 'Carga Horária - Semanal', value: 'credit' },
         { text: 'Min', value: 'minimum' },
         { text: 'Máx', value: 'maximum' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
@@ -340,15 +364,30 @@ export default {
     confirmBookings() {
       this.$toast.show('Confirmando reservas...')
       this.confirm()
-      this.$toast.success(
-        'Reserva confirmada! \n Aguarde, ao final do período, o recebimento de um e-mail de acompanhamento da secretaria.',
-        {
-          duration: 7000
-        }
-      )
+      this.$toast.success('Reserva confirmada! Para finalizar sua inscrição, entre em Reservas > Finalizar Matrícula', {
+        duration: 7000
+      })
     },
     choqueHorario() {
       console.log(this.overview)
+    },
+    customSort(items, sortBy, sortDesc, locale, customSorters) {
+      if (sortBy.length > 0) {
+        sortBy.map((key, index) =>
+          items.sort((a, b) => {
+            let _a = typeof a[key] === 'string' ? a[key].replace(/<[^>]*>/g, '') : a[key]
+            let _b = typeof b[key] === 'string' ? b[key].replace(/<[^>]*>/g, '') : b[key]
+
+            if (key === '_dVacancy') {
+              _a = parseInt(_a)
+              _b = parseInt(_b)
+            }
+
+            return _sort(_a, _b, { order: sortDesc[index] ? 'ASC' : 'DESC' })
+          })
+        )
+      }
+      return items
     }
   }
 }

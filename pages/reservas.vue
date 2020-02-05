@@ -5,13 +5,12 @@
       <!-- <div class="has-text-centered mb-12">Atualize as informações do seu perfil ou modifique sua senha.</div> -->
       <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 90%; flex-grow: 1;">
         <v-tabs v-model="tab" :color="tab ? 'green' : ''" centered class="d-flex flex-column" style="height: 100%;">
-          <v-tab>Não Confirmadas</v-tab>
-          <v-tab>Confirmadas</v-tab>
+          <v-tab v-for="(tabTab, index) in tabTabs" :key="index">{{ tabTabs[index] }}</v-tab>
 
           <v-tab-item v-for="(tabItem, index) in tabItems" :key="index">
             <v-card class="elevation-0">
               <v-card-title>
-                <v-tooltip v-if="tabItem.status === 'pending'" bottom>
+                <v-tooltip v-if="tabItems[index].status === 'pending'" bottom>
                   <template v-slot:activator="{ on }">
                     <v-btn
                       v-on="on"
@@ -48,12 +47,42 @@
                     </div>
                   </span>
                 </v-tooltip>
+                <v-spacer></v-spacer>
+                <template v-if="tabItems[index].status !== 'pending'">
+                  <v-tooltip v-if="!$auth.user.finished" bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on" @click="dialogFinish = true" tile depressed color="green lighten-5 green--text">
+                        <!-- <v-icon left>mdi-check</v-icon> -->
+                        Finalizar
+                      </v-btn>
+                    </template>
+                    <span>
+                      <div>Finalize sua inscrição</div>
+                      <div class="grey--text text--lighten-1 font-italic">Essa operação não poderá ser desfeita.</div>
+                    </span>
+                  </v-tooltip>
+                  <v-tooltip v-else bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn v-on="on" @click="dialogFinish = true" tile depressed color="grey lighten-5 black--text">
+                        <!-- <v-icon left>mdi-check</v-icon> -->
+                        Inscrição Finalizada
+                      </v-btn>
+                    </template>
+                    <span>
+                      <div class="grey--text text--lighten-2 font-italic">Sua inscrição foi finalizada.</div>
+                    </span>
+                  </v-tooltip>
+                </template>
               </v-card-title>
-              <v-data-table :headers="tabItem.headers" :items="tabItem.items" :items-per-page="-1">
+              <v-data-table
+                :headers="tabItems[index].headers"
+                :items="tabItems[index].items"
+                :items-per-page="-1"
+                :custom-sort="customSort"
+              >
                 <template v-slot:item="{ item }">
-                  <tr
-                    :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }"
-                  >
+                  <tr>
+                    <!-- :class="{ 'blue lighten-5': item._dStatus === 'pending', 'green lighten-5': item._dStatus === 'confirmed' }" -->
                     <td class="text-left">{{ item.name }}</td>
                     <td class="text-center">
                       <v-tooltip v-if="item.tags.includes('custo extra')" bottom>
@@ -76,12 +105,12 @@
                         <span>Atividade Complementar</span>
                       </v-tooltip>
                     </td>
-                    <template v-if="tabItem.status === 'confirmed'">
+                    <template v-if="tabItems[index].status === 'confirmed'">
                       <td class="text-start">
                         <div v-html="item._dStackPosition"></div>
                       </td>
                     </template>
-                    <template v-else-if="tabItem.status === 'pending'">
+                    <template v-else-if="tabItems[index].status === 'pending'">
                       <td class="text-start py-4">
                         <div v-for="(time, j) in item._dFullTime" :key="j">
                           {{ time }}
@@ -91,7 +120,7 @@
                     <td class="text-start">
                       <v-chip class="ma-1" x-small> {{ item.credit }} hora{{ item.credit > 1 ? 's' : '' }} </v-chip>
                     </td>
-                    <template v-if="tabItem.status === 'pending'">
+                    <template v-if="tabItems[index].status === 'pending'">
                       <td class="text-start">
                         <div v-if="item.maximum != 100" v-html="item._dVacancy"></div>
                         <v-icon v-else>mdi-infinity</v-icon>
@@ -100,7 +129,7 @@
                     <td class="text-start">
                       <v-tooltip v-if="item._dStatus === 'confirmed'" bottom>
                         <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" @click="confirmedDeselectItem(item)" icon>
+                          <v-btn v-on="on" icon>
                             <v-icon color="green">mdi-check-all</v-icon>
                           </v-btn>
                         </template>
@@ -116,7 +145,7 @@
                         <span>Confirmação Pendente</span>
                       </v-tooltip>
 
-                      <v-tooltip bottom>
+                      <v-tooltip v-if="!$auth.user.finished" bottom>
                         <template v-slot:activator="{ on }">
                           <v-btn
                             v-on="on"
@@ -162,6 +191,39 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogFinish" max-width="350">
+          <v-card>
+            <v-card-title class="headline">Finalizar</v-card-title>
+
+            <v-card-text>
+              <p>Tem certeza que deseja confirmar as matrículas selecionadas?</p>
+              <p>Essa operação não poderá ser cancelada.</p>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+
+              <v-btn @click="dialogFinish = false" color="red darken-1" text>
+                Cancelar
+              </v-btn>
+
+              <v-btn
+                @click="
+                  () => {
+                    finish({ value: true })
+                    dialogFinish = false
+                    tab = 0
+                  }
+                "
+                color="green darken-1"
+                text
+              >
+                Confirmar
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </div>
     </v-flex>
   </v-layout>
@@ -180,6 +242,7 @@ export default {
     return {
       dialog: false,
       dialogData: undefined,
+      dialogFinish: false,
       tab: 0,
       search: undefined,
       headersPending: [
@@ -189,7 +252,7 @@ export default {
           value: 'name'
         },
         { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
-        { text: 'Horário', value: '_dWeekday' },
+        { text: 'Horário', value: 'weekday' },
         { text: 'Carga Horária', value: 'credit' },
         { text: 'Vagas Disponíveis', value: '_dVacancy' },
         { text: 'Ações', value: 'action', sortable: false }
@@ -202,7 +265,7 @@ export default {
         },
         { text: 'Complementar/Eletiva', align: 'center', value: '_dTags' },
         { text: 'Situação', value: '_dStackPosition' },
-        { text: 'Carga Horária', value: 'credit' },
+        { text: 'Carga Horária - Semanal', value: 'credit' },
         { text: 'Ações', value: 'tags', sortable: false }
       ]
     }
@@ -254,6 +317,9 @@ export default {
         return m
       })
     },
+    tabTabs() {
+      return ['Lista de Espera', 'Finalizar Matrícula'].filter((e, index) => !this.$auth.user.finished || index === 1)
+    },
     tabItems() {
       return [
         {
@@ -266,16 +332,20 @@ export default {
           items: this.searchableMaterias.filter((materia) => materia._dStatus === 'confirmed'),
           headers: this.headersConfirmed
         }
-      ]
+      ].filter((e, index) => !this.$auth.user.finished || index === 1)
     }
   },
   mounted() {
-    if (this.tab !== 1 && this.overview.pending.length === 0) {
-      this.tab = 1
-    }
+    const self = this
+    this.$auth.fetchUser().then(() => {
+      if (self.tab !== 1 && self.overview.pending.length === 0 && !self.$auth.user.finished) {
+        self.tab = 1
+      }
+    })
   },
   methods: {
     ...mapActions('booking', ['select', 'deselect', 'confirm']),
+    ...mapActions(['finish']),
     updateItemsPerPage(newVal) {
       this.itemsPerPage = newVal
       setData('itemsPerPage', this.itemsPerPage)
@@ -296,12 +366,27 @@ export default {
     confirmBookings() {
       this.$toast.show('Confirmando reservas...')
       this.confirm()
-      this.$toast.success(
-        'Reserva confirmada! \n Aguarde, ao final do período, o recebimento de um e-mail de acompanhamento da secretaria.',
-        {
-          duration: 7000
-        }
-      )
+      this.$toast.success('Reserva confirmada! Para finalizar sua inscrição, entre em Reservas > Finalizar Matrícula', {
+        duration: 7000
+      })
+    },
+    customSort(items, sortBy, sortDesc, locale, customSorters) {
+      if (sortBy.length > 0) {
+        sortBy.map((key, index) =>
+          items.sort((a, b) => {
+            let _a = typeof a[key] === 'string' ? a[key].replace(/<[^>]*>/g, '') : a[key]
+            let _b = typeof b[key] === 'string' ? b[key].replace(/<[^>]*>/g, '') : b[key]
+
+            if (key === '_dVacancy') {
+              _a = parseInt(_a)
+              _b = parseInt(_b)
+            }
+
+            return _sort(_a, _b, { order: sortDesc[index] ? 'ASC' : 'DESC' })
+          })
+        )
+      }
+      return items
     }
   }
 }

@@ -3,6 +3,9 @@
     <h2 class="title has-text-centered mb-6">Cadastre-se no nosso sistema!</h2>
     <div class="has-text-centered mt-6 mb-6" style="font-size: 0.9em">
       O cadastro é individual para cada aluno e deve ser preenchido conforme indicado:
+      <br />
+      <br />
+      <span class="font-italic">(Para cada estudante é necessário o cadastro de emails diferentes).</span>
     </div>
 
     <form @submit.prevent="register" method="post">
@@ -11,7 +14,7 @@
           <v-text-field
             v-model="name"
             hide-details
-            label="Nome e sobrenome do Estudante"
+            label="Nome Completo do Estudante"
             type="text"
             autocomplete="Nome"
             name="name"

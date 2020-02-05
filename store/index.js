@@ -6,6 +6,8 @@ const logError = error.extend('materias')
 
 export const strict = false
 
+export const state = () => ({})
+
 export const actions = {
   async mail({ state, dispatch }, { users = [] } = {}) {
     const _users = _.isArray(users) ? users : [users]
@@ -21,6 +23,20 @@ export const actions = {
       log(`Mail sent to users`, _users)
 
       await dispatch('booking/init', true, { root: true })
+    }
+  },
+  async finish({ state, dispatch }, { value = true } = {}) {
+    const res = await this.$axios.$put(`me/finished`, {
+      value
+    })
+
+    if (!res.success) {
+      logError('Error on finishing', '/me/finished', res.error)
+      throw new Error('Error on finishing')
+    } else {
+      log(`Finished bookings`, res)
+
+      this.$auth.fetchUser()
     }
   }
 }
