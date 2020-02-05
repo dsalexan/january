@@ -247,7 +247,7 @@ function _sort(_a, _b, { order = 'ASC', lowercase = false, uppercase = false } =
 }
 
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'finished'],
   data() {
     return {
       dialog: false,

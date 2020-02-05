@@ -236,6 +236,24 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { LIST_TURMAS } from '~/utils/turmas'
 
+function _sort(_a, _b, { order = 'ASC', lowercase = false, uppercase = false } = {}) {
+  let a = _a
+  let b = _b
+
+  if (lowercase) {
+    a = typeof a === 'string' ? a.toLowerCase() : a
+    b = typeof b === 'string' ? b.toLowerCase() : b
+  }
+  if (uppercase) {
+    a = typeof a === 'string' ? a.toUpperCase() : a
+    b = typeof b === 'string' ? b.toUpperCase() : b
+  }
+
+  if (b === a) return 0
+  const c = b < a ? 1 : -1
+  return order === 'ASC' ? c : -1 * c
+}
+
 export default {
   middleware: 'auth',
   data() {

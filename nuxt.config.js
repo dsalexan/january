@@ -6,8 +6,8 @@ export default {
    ** Headers of the page
    */
   head: {
-    titleTemplate: 'Extracurriculares - Colégio Planck',
-    title: 'Extracurriculares',
+    titleTemplate: 'Eletivas - Colégio Planck',
+    title: 'Eletivas',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

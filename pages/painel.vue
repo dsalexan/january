@@ -143,7 +143,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import { LIST_TURMAS } from '~/utils/turmas'
 
 export default {
-  middleware: 'auth',
+  middleware: ['auth', 'admin'],
   data() {
     return {
       dialog: false,
