@@ -279,7 +279,7 @@ export default {
     return {
       drawer: true,
       miniVariant: getData('collapsedMenu') || false,
-      bottomSheet: true,
+      bottomSheet: false,
       e6: 1
     }
   },
