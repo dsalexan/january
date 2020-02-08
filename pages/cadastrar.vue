@@ -2,7 +2,7 @@
   <section class="page-cadastrar section mx-10">
     <h2 class="title has-text-centered mb-6">Cadastre-se no nosso sistema!</h2>
     <div class="has-text-centered mt-6 mb-6" style="font-size: 0.9em">
-      O cadastro é individual para cada aluno e deve ser preenchido conforme indicado:
+      O cadastro é individual para cada estudante e deve ser preenchido conforme indicado:
       <br />
       <br />
       <span class="font-italic">(Para cada estudante é necessário o cadastro de emails diferentes).</span>
@@ -14,7 +14,7 @@
           <v-text-field
             v-model="name"
             hide-details
-            label="Nome Completo do Estudante"
+            label="Nome completo do estudante"
             type="text"
             autocomplete="Nome"
             name="name"
@@ -77,7 +77,7 @@
     </form>
 
     <div class="has-text-centered mt-12" style="font-size: 1.1em; text-align: center">
-      Já tem uma conta? <nuxt-link to="/entrar">Clique aqui!</nuxt-link>
+      Já possui uma conta? <nuxt-link to="/entrar">Clique aqui!</nuxt-link>
     </div>
   </section>
 </template>
