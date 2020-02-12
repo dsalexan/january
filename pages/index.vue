@@ -312,7 +312,7 @@ export default {
           m._dWeekday = m.weekday.map((day) => day.toString().toWeekday())
           m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
           m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
-          m._dFullTime = m.weekday.map((_, i) => `${m._dStartTime[i]} as ${m._dEndTime[i]}`)
+          m._dFullTime = m.weekday.map((_, i) => `${m._dStartTime[i]} até ${m._dEndTime[i]}`)
           // NOME ATIVIDADE | ATIVIDADE COMPLEMENTAR | ATIVIDADE ELETIVA | DIA DA SEMANA | HORÁRIO | MIN | MAX | VAGAS DISPONÍVEIS | AÇÕES.
 
           m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])

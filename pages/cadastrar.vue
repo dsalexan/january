@@ -5,7 +5,7 @@
       O cadastro é individual para cada estudante e deve ser preenchido conforme indicado:
       <br />
       <br />
-      <span class="font-italic">(Para cada estudante é necessário o cadastro de emails diferentes).</span>
+      <span class="font-italic">(Para cada estudante é necessário o cadastro de um e-mail diferente).</span>
     </div>
 
     <form @submit.prevent="register" method="post">
