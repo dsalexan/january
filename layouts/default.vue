@@ -130,7 +130,7 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  href="http://extracurriculares.colegioplanck.com.br/assets/tutorial.pdf"
+                  href="http://extracurriculares.colegioplanck.com.br:3001/assets/tutorial.pdf"
                   target="_blank"
                 >
                   <v-icon :left="!miniVariant">mdi-help</v-icon>
