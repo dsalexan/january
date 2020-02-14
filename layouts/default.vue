@@ -121,7 +121,7 @@
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="hasPage('home')">
+        <v-list-item v-if="hasPage('home') || hasPage('home')">
           <v-list-item-content>
             <v-tooltip right>
               <template v-slot:activator="{ on }">
