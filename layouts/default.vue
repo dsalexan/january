@@ -121,6 +121,31 @@
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
+        <v-list-item v-if="hasPage('home')">
+          <v-list-item-content>
+            <v-tooltip right>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-on="on"
+                  :fab="miniVariant"
+                  :icon="miniVariant"
+                  :text="!miniVariant"
+                  :color="$route.name === 'index' ? 'blue accent-4' : ''"
+                  href="http://167.172.246.25:3001/tutorial"
+                  target="_blank"
+                >
+                  <v-icon :left="!miniVariant">mdi-help</v-icon>
+                  <span v-if="!miniVariant">
+                    Tutorial
+                  </span>
+                </v-btn>
+              </template>
+              <span>
+                Tutorial
+              </span>
+            </v-tooltip>
+          </v-list-item-content>
+        </v-list-item>
         <v-list-item v-for="(page, x) in otherPages" :key="x">
           <v-list-item-content>
             <v-tooltip right>
