@@ -130,8 +130,7 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  :color="$route.name === 'index' ? 'blue accent-4' : ''"
-                  href="http://167.172.246.25:3001/tutorial"
+                  href="http://167.172.246.25:3001/assets/tutorial.pdf"
                   target="_blank"
                 >
                   <v-icon :left="!miniVariant">mdi-help</v-icon>
