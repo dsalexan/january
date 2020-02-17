@@ -54,10 +54,16 @@ export const getters = {
       blockedByConfirmed = _.cloneDeep(o.confirmed)
         .filter((cb) => cb.weekday.some((wd) => b.weekday.includes(wd)))
         .filter((cb) =>
-          overlap([
-            [cb.starttime, cb.endtime],
-            [b.starttime, b.endtime]
-          ])
+          b.weekday.some((bDay, i) =>
+            cb.weekday.some(
+              (cbDay, j) =>
+                bDay === cbDay &&
+                overlap([
+                  [cb.starttime[j], cb.endtime[j]],
+                  [b.starttime[i], b.endtime[i]]
+                ])
+            )
+          )
         )
 
       // against pending
@@ -65,10 +71,16 @@ export const getters = {
         blockedByPending = _.cloneDeep(o.pending)
           .filter((cb) => cb.materia !== b.materia && cb.weekday.some((wd) => b.weekday.includes(wd)))
           .filter((cb) =>
-            overlap([
-              [cb.starttime, cb.endtime],
-              [b.starttime, b.endtime]
-            ])
+            b.weekday.some((bDay, i) =>
+              cb.weekday.some(
+                (cbDay, j) =>
+                  bDay === cbDay &&
+                  overlap([
+                    [cb.starttime[j], cb.endtime[j]],
+                    [b.starttime[i], b.endtime[i]]
+                  ])
+              )
+            )
           )
       }
 

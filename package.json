@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "cross-env BASE_URL=http://localhost:3001 nuxt",
+    "dev:remote": "cross-env BASE_URL=http://167.172.246.25:3001 nuxt",
     "build": "nuxt build",
     "start": "cross-env BASE_URL=http://167.172.246.25:3001 nuxt start",
     "generate": "nuxt generate",
