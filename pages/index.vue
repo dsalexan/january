@@ -328,13 +328,14 @@ export default {
 
           const bookings = m.bookings.filter((b) => b.status === 1).length
           m._dVacancy = m.maximum - bookings - m.inscritos
-          if (m._dVacancy <= 0) {
+          if (m._dVacancy < 0) {
             if (m._dFinished) {
               m._dVacancy = `<b class="mr-1 red--text text--darken-1">Inscrições Encerradas</b>`
             } else {
               m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
                 -1 +
                 1}</div>`
+              m._dVacancy = `${m.maximum}/${bookings}/${m.inscritos}`
             }
           } else {
             // eslint-disable-next-line eqeqeq
