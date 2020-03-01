@@ -305,15 +305,20 @@ export default {
         m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
         m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
         m._dFullTime = m.weekday.map((_, i) => `${m._dWeekday[i]}, ${m._dStartTime[i]} as ${m._dEndTime[i]}`)
+        m._dFinished = m.maximum === m.inscritos
 
         m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])
 
         const bookings = m.bookings.filter((b) => b.status === 1).length
-        m._dVacancy = m.maximum - bookings
+        m._dVacancy = m.maximum - bookings - m.inscritos
         if (m._dVacancy <= 0) {
-          m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
-            -1 +
-            1}</div>`
+          if (m._dFinished) {
+            m._dVacancy = `<b class="mr-1 red--text text--darken-1">Inscrições Encerradas</b>`
+          } else {
+            m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
+              -1 +
+              1}</div>`
+          }
         } else {
           // m._dVacancy = `<b>${m._dVacancy}</b>`
           // eslint-disable-next-line eqeqeq

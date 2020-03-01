@@ -129,13 +129,21 @@
                     <td class="text-start">
                       <v-tooltip v-if="item._dStatus === undefined" bottom>
                         <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" @click="() => (item._dUnallowedTurma ? () => {} : selectItem(item))" icon>
-                            <v-icon v-if="!item._dUnallowedTurma">mdi-checkbox-blank-circle-outline</v-icon>
+                          <v-btn
+                            v-on="on"
+                            @click="() => (item._dUnallowedTurma || item._dFinished ? () => {} : selectItem(item))"
+                            icon
+                          >
+                            <v-icon v-if="!item._dUnallowedTurma && !item._dFinished">mdi-checkbox-blank-circle-outline</v-icon>
                             <v-icon v-else>mdi-cancel</v-icon>
                           </v-btn>
                         </template>
                         <span>{{
-                          item._dUnallowedTurma ? 'Essa atividade não está disponível para sua turma' : 'Selecionar'
+                          item._dUnallowedTurma
+                            ? 'Essa atividade não está disponível para sua turma'
+                            : item._dFinished
+                            ? 'Inscrições Encerradas'
+                            : 'Selecionar'
                         }}</span>
                       </v-tooltip>
 
@@ -313,16 +321,21 @@ export default {
           m._dStartTime = m.starttime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
           m._dEndTime = m.endtime.map((time) => this.$moment('2019-01-19 ' + time).format('HH:mm'))
           m._dFullTime = m.weekday.map((_, i) => `${m._dStartTime[i]} até ${m._dEndTime[i]}`)
+          m._dFinished = m.maximum === m.inscritos
           // NOME ATIVIDADE | ATIVIDADE COMPLEMENTAR | ATIVIDADE ELETIVA | DIA DA SEMANA | HORÁRIO | MIN | MAX | VAGAS DISPONÍVEIS | AÇÕES.
 
           m._dTurmas = (m.turmas || []).map((turma) => LIST_TURMAS[turma])
 
           const bookings = m.bookings.filter((b) => b.status === 1).length
-          m._dVacancy = m.maximum - bookings
+          m._dVacancy = m.maximum - bookings - m.inscritos
           if (m._dVacancy <= 0) {
-            m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
-              -1 +
-              1}</div>`
+            if (m._dFinished) {
+              m._dVacancy = `<b class="mr-1 red--text text--darken-1">Inscrições Encerradas</b>`
+            } else {
+              m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
+                -1 +
+                1}</div>`
+            }
           } else {
             // eslint-disable-next-line eqeqeq
             m._dVacancy = `<b>${m.maximum == 100 ? '<v-icon>mdi-infinity</v-icon>' : m._dVacancy}</b>`
