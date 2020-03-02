@@ -179,7 +179,10 @@ export default {
     mappedBookings() {
       return _.cloneDeep(this.bookings).map((b) => {
         b._dPosition = b.bookings.map(
-          (m) => `<b class="${m.position > m.maximum ? 'red' : 'green'}--text mr-1">${m.position}</b> de ${m.maximum}</div>`
+          (m) =>
+            `<b class="${m.position + m.inscritos > m.maximum ? 'red' : 'green'}--text mr-1">${m.position + m.inscritos}</b> de ${
+              m.maximum
+            }</div>`
         )
 
         b._dTurma = LIST_TURMAS[b.turma]
