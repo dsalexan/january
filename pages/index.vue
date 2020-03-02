@@ -335,7 +335,6 @@ export default {
               m._dVacancy = `<b class="mr-1">Fila de Espera</b><div class="grey--text text--darken-1">Posição Atual: ${m._dVacancy *
                 -1 +
                 1}</div>`
-              m._dVacancy = `${m.maximum}/${bookings}/${m.inscritos}`
             }
           } else {
             // eslint-disable-next-line eqeqeq
