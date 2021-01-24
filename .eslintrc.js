@@ -36,6 +36,7 @@ module.exports = {
     'consistent-return': 'off',
     'prefer-destructuring': 'warn',
     'no-unused-vars': 'warn',
-    'no-extend-native': 'off'
+    'no-extend-native': 'off',
+    'vue/comment-directive': 'off'
   }
 }

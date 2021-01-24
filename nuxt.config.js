@@ -1,7 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  mode: 'spa',
+  ssr: false,
   /*
    ** Headers of the page
    */
@@ -88,7 +88,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: process.env.BASE_URL || 'http://167.172.246.25:3001'
+    baseURL: process.env.BASE_URL || 'http://34.123.51.106/'
   },
   auth: {
     redirect: {
@@ -162,5 +162,13 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {}
+  },
+  server: {
+    port: process.env.PORT || 3000,
+    host: process.env.HOST || '0.0.0.0',
+    timing: false
+  },
+  publicRuntimeConfig: {
+    BASE_URL: process.env.BASE_URL
   }
 }

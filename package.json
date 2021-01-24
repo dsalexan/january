@@ -5,14 +5,16 @@
   "author": "dsalexan",
   "private": true,
   "scripts": {
-    "dev": "cross-env BASE_URL=http://localhost:3001 nuxt",
-    "dev:remote": "cross-env BASE_URL=http://167.172.246.25:3001 nuxt",
+    "dev": "nuxt",
     "build": "nuxt build",
-    "start": "cross-env BASE_URL=http://167.172.246.25:3001 nuxt start",
+    "start": "nuxt start",
     "generate": "nuxt generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "fix": "eslint --ext .js,.vue --ignore-path .gitignore . --fix",
-    "up": "pm2 start npm -- start"
+    "up": "pm2 start npm -- start",
+    "image:build": "docker build -t gcr.io/eletivas-planck/extracurriculares-front:latest .",
+    "image:push": "docker push gcr.io/eletivas-planck/extracurriculares-front:latest",
+    "deploy:rollout": "kubectl rollout restart deployment extracurriculares-front"
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.8.5",
@@ -21,28 +23,28 @@
     "@nuxtjs/moment": "^1.5.0",
     "@nuxtjs/pwa": "^3.0.0-0",
     "@nuxtjs/toast": "^3.3.0",
+    "@nuxtjs/vuetify": "^1.0.0",
     "cross-env": "^7.0.0",
     "debug": "^4.1.1",
     "install": "^0.13.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
+    "node-sass": "^5.0.0",
     "npm": "^6.13.6",
-    "nuxt": "^2.0.0",
-    "nuxt-storage": "^1.2.2"
+    "nuxt": "^2.14.6",
+    "nuxt-storage": "^1.2.2",
+    "sass-loader": "^10.1.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^1.0.1",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/style-resources": "^1.0.0",
-    "@nuxtjs/vuetify": "^1.0.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^6.1.0",
+    "eslint": "^7.18.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.0.1",
-    "node-sass": "^4.13.1",
-    "prettier": "^1.16.4",
-    "sass-loader": "^8.0.2"
+    "prettier": "^1.16.4"
   }
 }

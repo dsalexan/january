@@ -56,7 +56,17 @@ export default {
       return !this.email.isEmpty() && !this.password.isEmpty()
     }
   },
+  mounted() {
+    this.passthrough()
+  },
   methods: {
+    async passthrough() {
+      const token = new URLSearchParams(window.location.search).get('token')
+
+      const { data } = await this.$axios.post('auth/signin', {
+        token
+      })
+    },
     async login() {
       try {
         this.$toast.show('Entrando...')
