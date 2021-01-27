@@ -61,11 +61,31 @@ export default {
   },
   methods: {
     async passthrough() {
+      // TODO: mostrar mensagem de "entrando..."
       const token = new URLSearchParams(window.location.search).get('token')
 
-      const { data } = await this.$axios.post('auth/signin', {
-        token
-      })
+      try {
+        this.$toast.show('Entrando...')
+        await this.$auth.loginWith('local', {
+          data: {
+            token
+          }
+        })
+
+        if (this.$auth.user === false) {
+          this.$toast.error('Falha na Autenticação')
+        } else {
+          this.$toast.success('Autenticado com Sucesso')
+
+          this.$router.push(this.$auth.user.home || '/')
+        }
+      } catch (e) {
+        this.error = e.response.data.error
+        this.$toast.error(this.error)
+
+        this.email = ''
+        this.password = ''
+      }
     },
     async login() {
       try {
