@@ -1,6 +1,4 @@
-# january
-
-> January Project
+Extracurricular
 
 ## Build Setup
 

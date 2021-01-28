@@ -1,8 +1,7 @@
 {
-  "name": "january",
+  "name": "extracurriculares",
   "version": "1.0.0",
-  "description": "January Project",
-  "author": "dsalexan",
+  "description": "Sistema de matrícula nas atividades exracurriculares do Colégio Planck",
   "private": true,
   "scripts": {
     "dev": "nuxt",
