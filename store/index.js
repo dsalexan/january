@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isNil, get, find } from 'lodash'
 import debug, { error } from '~/utils/debug'
 
 const log = debug.extend('materias')
@@ -6,7 +6,22 @@ const logError = error.extend('materias')
 
 export const strict = false
 
-export const state = () => ({})
+export const state = () => ({
+  student: null
+})
+
+export const getters = {
+  studentName: (state) => {
+    return get(find(get(state.auth.user, 'students', []), ['_id', state.student]), 'name', null)
+  }
+}
+
+export const mutations = {
+  setStudent(state, index) {
+    if (isNil(index)) return (state.student = null)
+    state.student = index
+  }
+}
 
 export const actions = {
   async mail({ state, dispatch }, { users = [] } = {}) {

@@ -25,15 +25,21 @@
                   :fab="miniVariant"
                   :icon="miniVariant"
                   :text="!miniVariant"
-                  :color="$route.name === 'perfil' ? 'blue accent-4' : ''"
-                  to="/perfil"
+                  :color="$route.name === 'filhos' ? 'blue accent-4' : ''"
+                  to="/filhos"
                   nuxt
                 >
-                  <span v-if="!miniVariant" style="color: black!important">{{ userName }}</span>
+                  <span v-if="!miniVariant" style="color: black !important; text-align: center;"
+                    ><div>
+                      <span v-if="studentName">{{ studentName }}</span>
+                      <i v-else style="color: #FF8F00 !important">Filho não selecionado</i>
+                    </div>
+                    <div style="text-transform: none; font-weight: 300;">{{ userName }}</div></span
+                  >
                   <span v-else style="color: black!important">{{ userAbbreviation }}</span>
                 </v-btn>
               </template>
-              <span>Meu Perfil</span>
+              <span>Meus Filhos</span>
             </v-tooltip>
           </v-list-item-content>
         </v-list-item>
@@ -310,6 +316,7 @@ export default {
   computed: {
     ...mapState('auth', ['user']),
     ...mapGetters('booking', ['overview']),
+    ...mapGetters(['studentName']),
     userName() {
       return this.user.name
     },
