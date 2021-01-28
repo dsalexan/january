@@ -144,10 +144,10 @@ export const actions = {
     }
   },
   async userBookings({ state }, force = false) {
-    const res = await this.$axios.$get(`me/booking`)
+    const res = await this.$axios.$get(state.student + `/booking`)
 
     if (!res.success) {
-      logError('Error on fetching booking from API', '/me/booking', res.error)
+      logError('Error on fetching booking from API', state.student + '/booking', res.error)
       throw new Error('Error on fetching booking from API')
     } else {
       state.list = res.data
@@ -184,7 +184,7 @@ export const actions = {
   async select({ state, dispatch }, id) {
     if (state.list.includes(id)) return
 
-    const res = await this.$axios.$post('me/booking', {
+    const res = await this.$axios.$post(state.student + '/booking', {
       materia: id,
       status: 0
     })
@@ -202,7 +202,7 @@ export const actions = {
     for (const _id of _ids) {
       if (!state.list.find((booking) => booking.materia === _id)) continue
 
-      const res = await this.$axios.$post('me/booking', {
+      const res = await this.$axios.$post(state.student + '/booking', {
         materia: _id,
         status: 1
       })
@@ -221,7 +221,7 @@ export const actions = {
 
     if (index === undefined) return
 
-    const res = await this.$axios.$delete(`me/booking/${id}`)
+    const res = await this.$axios.$delete(state.student + `/booking/${id}`)
 
     if (!res.success) return logError('Could not add to booking in API', res.error)
 

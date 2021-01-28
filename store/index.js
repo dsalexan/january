@@ -41,12 +41,12 @@ export const actions = {
     }
   },
   async finish({ state, dispatch }, { value = true } = {}) {
-    const res = await this.$axios.$put(`me/finished`, {
+    const res = await this.$axios.$put(state.student + `/finished`, {
       value
     })
 
     if (!res.success) {
-      logError('Error on finishing', '/me/finished', res.error)
+      logError('Error on finishing', '/' + state.student + '/finished', res.error)
       throw new Error('Error on finishing')
     } else {
       log(`Finished bookings`, res)

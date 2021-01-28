@@ -1,11 +1,47 @@
 <template>
   <v-layout class="page-reservas" column justify-center align-center>
     <v-flex class="d-flex flex-column justify-center align-center" style="width: 100%">
-      <h2 class="display-2 has-text-centered mb-1 font-weight-bold">Reservas</h2>
+      <h2 class="display-2 has-text-centered mb-1 font-weight-bold">Painel Administrativo</h2>
       <!-- <div class="has-text-centered mb-12">Atualize as informações do seu perfil ou modifique sua senha.</div> -->
       <div class="d-flex flex-row justify-space-around align-center pt-4" style="width: 90%; flex-grow: 1;">
         <v-tabs v-model="tab" :color="tab ? 'green' : ''" centered class="d-flex flex-column" style="height: 100%;">
+          <v-tab>Matérias</v-tab>
           <v-tab>Reservas Confirmadas</v-tab>
+
+          <v-tab-item v-for="(tabItem, index) in tabItems2" :key="index">
+            <v-card class="elevation-0">
+              <v-card-title>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      v-on="on"
+                      :href="`${$axios.defaults.baseURL}/booking/export?x-access-token=${token}`"
+                      target="_blank"
+                      tile
+                      depressed
+                      color="green lighten-5 green--text"
+                    >
+                      Exportar para Excel
+                    </v-btn>
+                  </template>
+                  <span>
+                    Baixar
+                  </span>
+                </v-tooltip>
+                <v-spacer></v-spacer>
+              </v-card-title>
+              <v-data-table :headers="tabItem.headers" :items="tabItem.items" :items-per-page="-1">
+                <template v-slot:item="{ item }">
+                  <tr :class="{ 'green lighten-5': false }">
+                    <td class="text-left">{{ item.name }}</td>
+                    <td class="text-start">{{ item.min }}</td>
+                    <td class="text-start">{{ item.max }}</td>
+                    <td class="text-start">{{ item.current }}</td>
+                  </tr></template
+                >
+              </v-data-table>
+            </v-card>
+          </v-tab-item>
 
           <v-tab-item v-for="(tabItem, index) in tabItems" :key="index">
             <v-card class="elevation-0">
@@ -215,6 +251,30 @@ export default {
           status: 'confirmed',
           items: this.mappedBookings,
           headers: this.headers
+        }
+      ]
+    },
+    tabItems2() {
+      return [
+        {
+          status: 'confirmed',
+          items: [
+            { name: 'Matéria 1', min: 5, max: 25, current: 13 },
+            { name: 'Matéria 2', min: 5, max: 27, current: 27 },
+            { name: 'Matéria 3', min: 10, max: 20, current: 2 },
+            { name: 'Matéria 4', min: 6, max: 35, current: 13 },
+            { name: 'Matéria 5', min: 10, max: 20, current: 0 }
+          ],
+          headers: [
+            {
+              text: 'Matéria',
+              align: 'left',
+              value: 'name'
+            },
+            { text: 'Mínimo', value: 'min' },
+            { text: 'Máximo', value: 'max' },
+            { text: 'Quantidade Atual de Inscritos', value: 'current' }
+          ]
         }
       ]
     },
