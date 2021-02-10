@@ -88,7 +88,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: process.env.BASE_URL || 'http://34.123.51.106/'
+    baseURL: process.env.BASE_URL || 'https://extracurriculares-back-t4frappljq-uc.a.run.app/'
   },
   auth: {
     redirect: {
