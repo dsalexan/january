@@ -29,7 +29,7 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
-    "node-sass": "^5.0.0",
+    "node-sass": "^7.0.0",
     "npm": "^6.13.6",
     "nuxt": "^2.14.6",
     "nuxt-storage": "^1.2.2",
